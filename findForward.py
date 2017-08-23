@@ -2,9 +2,11 @@ import os
 
 
 def for_file(file, result=[], search_words=[]):
+    ns = {}
+    brackets_depth = 0
     if file.is_file():
-        with open(file.path, 'r') as f:
-            lines = f.readlines()
+        with open(file.path, 'r') as file:
+            lines = file.readlines()
             for line in lines:
                 for word in search_words:
                     if word in line:
