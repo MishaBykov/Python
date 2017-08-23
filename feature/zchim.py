@@ -1,4 +1,5 @@
 import os
+import argparse
 
 
 def new_name(old_name, ins):
@@ -25,10 +26,22 @@ def rename(path, name, src, rep_src, a=0):
         return path, nr
 
 
-def main():
-    path_dir = input("Введите путь каталога: ")
-    source = input("Введите часть имени: ")
-    rep = input("Введите замену части имени: ")
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Replace of part of a name')
+    parser.add_argument("path", type=str,
+                        help="input path dir")
+    parser.add_argument("-s", "--source", nargs='?',
+                        help="input source")
+    parser.add_argument("-r", "--rep", nargs='?',
+                        help="input replace")
+    args = parser.parse_args()
+    path_dir = args.path
+    source = args.source
+    if source is None:
+        source = input("Введите часть имени: ")
+    rep = args.rep
+    if rep is None:
+        rep = input("Введите замену части имени: ")
     names = os.listdir(path_dir)
     zeros = set()
     for name in names:
@@ -40,7 +53,3 @@ def main():
             os.rename(os.path.join(zero[0], zero[1]), os.path.join(zero[0], new_name(zero[1], 0)))
         except OSError:
             rename(zero[0], zero[1], "", "", a=1)
-
-
-if __name__ == '__main__':
-    main()
