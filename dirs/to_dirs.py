@@ -1,3 +1,4 @@
+import argparse
 import shutil as sh
 import os
 
@@ -21,12 +22,26 @@ def f(files, count_one_dir, name_dir, shift_name, length_name):
     except:
         f(files, count_one_dir, name_dir, shift_name, length_name + 1)
 
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Replace of part of a name')
+    parser.add_argument("path", type=str,
+                        help="input path dir")
+    parser.add_argument("-ns", "--nameStart", nargs='?',
+                        help="input nameStart")
+    parser.add_argument("-cod", "--countOneDir", nargs='?',
+                        help="input countOneDir ")
+    args = parser.parse_args()
+    path = args.path
+    countOneDir = args.countOneDir
+    if countOneDir is None:
+        countOneDir = int(input("Количество файлов на одну папку: "))
+    nameStart = args.nameStart
+    if nameStart is None:
+        nameStart = int(input("nameStart: "))
+    shiftName = nameStart
 
-path = input("Введите путь каталога: ")
-countOneDir = int(input("Количество файлов на одну папку: "))
-shiftName = int(input("name_start: "))
-files_list = sorted(os.listdir(path), key=sort_alphabet)
-os.chdir(path)
-lengthName = int(len(str(len(files_list) // countOneDir + shiftName)))
-nameDir = 0
-f(files_list, countOneDir, nameDir, shiftName, lengthName)
+    files_list = sorted(os.listdir(path), key=sort_alphabet)
+    os.chdir(path)
+    lengthName = int(len(str(len(files_list) // countOneDir + shiftName)))
+    nameDir = 0
+    f(files_list, countOneDir, nameDir, shiftName, lengthName)

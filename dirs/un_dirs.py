@@ -1,3 +1,4 @@
+import argparse
 import os
 
 
@@ -23,7 +24,12 @@ def move(src, dst, a=0):
 
 
 def main():
-    path = input("Введите путь каталога: ")
+    parser = argparse.ArgumentParser(description='Replace of part of a name')
+    parser.add_argument("path", type=str,
+                        help="input path dir")
+    args = parser.parse_args()
+    path = args.path
+
     zeros = set()
     for file in os.scandir(path):
         if file.is_dir():

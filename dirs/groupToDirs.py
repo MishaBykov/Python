@@ -1,3 +1,4 @@
+import argparse
 import os
 
 
@@ -17,8 +18,11 @@ def f(path_dir):
         if i == len(files):
             break
 
-
-path = input("Путь: ")
-os.system('cd /d  path')
-os.chdir(path)
-f(path)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Replace of part of a name')
+    parser.add_argument("path", type=str, help="input path dir")
+    args = parser.parse_args()
+    path = args.path
+    os.system('cd /d  path')
+    os.chdir(path)
+    f(path)
