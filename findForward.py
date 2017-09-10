@@ -1,35 +1,58 @@
-import os
+import argparse
 
 
-def for_file(file, result=[], search_words=[]):
-    ns = {}
+def i_d_0(string):
+    if "const" in string:
+        return 1
+    if "class" in string or "struct" in string:
+        return 2
+    if "typedef" in string:
+        return 3
+
+
+def i_d_1(string):
+    if not ("(" in string) or string.find("=") < string.find("("):
+        return 6
+    return 0
+
+
+def i_d_2():
+    pass
+
+
+def i_d_3():
+    pass
+
+
+def i_d_4():
+    pass
+
+
+def i_d_5():
+    pass
+
+
+def to_file(path_file):
+    pass
+
     brackets_depth = 0
-    if file.is_file():
-        with open(file.path, 'r') as file:
-            lines = file.readlines()
-            for line in lines:
-                for word in search_words:
-                    if word in line:
-                        result.append(line.replace("\n", ""))
-    else:
-        print("Пришла папка")
-    return result
+    i_d = 0
+    active_string = ""
+    with open(path_file, 'r') as p_f:
+        pass
 
-
-def f():
-    result = []
-    stack = [os.scandir(pathDir)]
-    while stack:
-        for i in stack.pop():
-            if i.is_dir():
-                stack.append(os.scandir(i.path))
-            if i.is_file():
-                result = for_file(i, result=result, search_words=words)
-    return result
 
 if __name__ == '__main__':
-    pathDir = input("Введите путь:\n")
-    words = input("Слова для поиска:\n").split()
-
-    for i in f():
-        print(i)
+    parser = argparse.ArgumentParser(description='Replace of part of a name')
+    parser.add_argument("pathInput", type=str,
+                        help="input path dir")
+    parser.add_argument("pathOutput", type=str,
+                        help="output path")
+    args = parser.parse_args()
+    source = args.pathInput
+    out = args.pathOutput
+    fOut = open(out, 'a')
+    ns = [{}, []]
+    with open(source, 'r') as s:
+        for line in s:
+            to_file(line)
