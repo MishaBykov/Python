@@ -1,39 +1,32 @@
 import argparse
 
 
-def i_d_0(string):
-    if "const" in string:
-        return 1
-    if "class" in string or "struct" in string:
-        return 2
-    if "typedef" in string:
-        return 3
-
-
-def i_d_1(string):
-    if not ("(" in string) or string.find("=") < string.find("("):
-        return 6
-    return 0
-
-
-def i_d_2():
-    pass
-
-
-def i_d_3():
-    pass
-
-
-def i_d_4():
-    pass
-
-
-def i_d_5():
-    pass
-
-
 def to_file(path_file):
-    pass
+    def i_d_0(string):
+        if "const" in string:
+            return 1
+        if "class" in string or "struct" in string:
+            return 2
+        if "typedef" in string:
+            return 3
+
+    def i_d_1(string):
+        if not ("(" in string) or string.find("=") < string.find("("):
+            return 6
+        return 0
+
+    def i_d_2():
+        pass
+
+    def i_d_3():
+        pass
+
+    def i_d_4():
+        pass
+
+    def i_d_5():
+        pass
+
 
     brackets_depth = 0
     i_d = 0
