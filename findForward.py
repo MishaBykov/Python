@@ -6,25 +6,26 @@ def to_file(path_file):
         global brackets_depth
         st = str(file.readline())
         brackets_depth += st.count("{") - st.count("}")
+
         return st
 
     def id_0(string):
-        if "const" in string:
-            return 1
-        elif "class" in string or "struct" in string:
+        pass
+
+    def id_1(string):
+        if "namespace" in string:
             return 2
-        elif "typedef" in string:
+        elif "class" in string or "struct" in string:
             return 3
         elif "enum" in string:
             return 4
-        elif "namespace" in string:
+        elif "typedef" in string:
             return 5
         return 0
 
-    def id_1(string):
-        if not ("(" in string) or string.find("=") < string.find("("):
-            return 6
-        return 0
+        # if not ("(" in string) or string.find("=") < string.find("("):
+        #     return 6
+        # return 0
 
     def id_2(string):
         if ";" in string:
@@ -43,7 +44,8 @@ def to_file(path_file):
         pass
 
     brackets_depth = 0
-    string = ""
+    result = ""
+    ns_path = []
     ns = ns_root
     funcs = [id_0, id_1, id_2, id_3, id_4, id_5]
     with open(path_file, 'r') as o_f:
