@@ -3,16 +3,30 @@ import argparse
 
 def to_file(path_file):
     def next_str(file):
-        global brackets_depth
+        global brackets_depth, ns_path
         st = str(file.readline())
         brackets_depth += st.count("{") - st.count("}")
-
+        if ns[2] > brackets_depth:
+            ns_path = ns_path[:-1]
+            update_ns()
         return st
 
-    def id_0(string):
-        pass
+    def update_ns():
+        global ns
+        ns = ns_root
+        for i in ns_path:
+            ns = ns[0][i]
 
-    def id_1(string):
+    def to_end(file, string, stop_words):
+        strings = [string]
+        while True:
+            strings.append(string)
+            for stop_word in stop_words:
+                if stop_word in string:
+                    return stop_word, strings
+            string = next_str(file)
+
+    def id_1(string, file):
         if "namespace" in string:
             return 2
         elif "class" in string or "struct" in string:
@@ -23,32 +37,44 @@ def to_file(path_file):
             return 5
         return 0
 
-        # if not ("(" in string) or string.find("=") < string.find("("):
-        #     return 6
-        # return 0
+    def id_2(string, file):
+        global ns
+        result = to_end(file, string, [';', '{'])
+        if result[0] == ';':
+            return 1
+        ns[0][string] = [{}, [], brackets_depth]
+        ns_path.append(string)
+        ns = ns[0][string]
 
-    def id_2(string):
-        if ";" in string:
-            return 0
+    def id_3(string, file):
+        result = to_end(file, string, [';', '{'])
+        if result[0] == ';':
+            return 1
+        to_save(3, result[1])
 
-    def id_3(string):
-        pass
+    def id_4(string, file):
+        result = to_end(file, string, ['{'])
+        to_save(4, result[1])
 
-    def id_4():
-        pass
+    def id_5(string, file):
+        result = to_end(file, string, [';'])
+        to_save(5, result[1])
 
-    def id_5(string):
-        pass
-
-    def id_6(string):
-        pass
+    def to_save(type_string, string):
+        if 3 == type_string:
+            ns[1].append(string)
+        elif 4 == type_string:
+            ns[1].append("ENUM_DECL(" + string + ")")
+        elif 5 in string:
+            ns[1].append(string)
+        return 1
 
     brackets_depth = 0
-    result = ""
     ns_path = []
     ns = ns_root
-    funcs = [id_0, id_1, id_2, id_3, id_4, id_5]
-    with open(path_file, 'r') as o_f:
+    funcs = [0, id_1, id_2, id_3, id_4, id_5]
+    with open(path_file, 'r') as i_f:
+
         pass
 
 
@@ -66,3 +92,5 @@ if __name__ == '__main__':
     with open(source, 'r') as s:
         for line in s:
             to_file(line)
+    pass
+    fOut.close()
