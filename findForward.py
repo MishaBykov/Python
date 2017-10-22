@@ -45,26 +45,30 @@ def to_file(path_file):
         ns[0][string] = [{}, [], brackets_depth]
         ns_path.append(string)
         ns = ns[0][string]
+        return 0
 
     def id_3(string, file):
         result = to_end(file, string, [';', '{'])
         if result[0] == ';':
             return 1
         to_save(3, result[1])
+        return 0
 
     def id_4(string, file):
         result = to_end(file, string, ['{'])
         to_save(4, result[1])
+        return 0
 
     def id_5(string, file):
         result = to_end(file, string, [';'])
         to_save(5, result[1])
+        return 0
 
     def to_save(type_string, string):
         if 3 == type_string:
             ns[1].append(string)
         elif 4 == type_string:
-            ns[1].append("ENUM_DECL(" + string + ")")
+            ns[1].append("ENUM_DECL(" + string[:-1] + ")\n")
         elif 5 in string:
             ns[1].append(string)
         return 1
@@ -72,10 +76,13 @@ def to_file(path_file):
     brackets_depth = 0
     ns_path = []
     ns = ns_root
+    state = 0
     funcs = [0, id_1, id_2, id_3, id_4, id_5]
     with open(path_file, 'r') as i_f:
+        if 0 == state:
+            state = 1
 
-        pass
+
 
 
 if __name__ == '__main__':
