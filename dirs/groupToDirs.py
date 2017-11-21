@@ -7,16 +7,16 @@ def f(path_dir):
     while True:
         files = os.listdir(path)
         while i < len(files):
-            name = files[i].split(sep=" (")
-            name.sort(reverse=True)
+            name = files[i].split(sep="(")
             if len(name) > 1:
-                name = name[0]
+                name = name[0].strip()
                 os.mkdir(name)
-                os.system('move "*' + name + '*" "' + name + '"')
+                os.system('move "*' + str(name) + '*" "' + str(name) + '"')
                 break
             i += 1
         if i == len(files):
             break
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Replace of part of a name')
