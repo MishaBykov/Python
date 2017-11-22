@@ -30,18 +30,20 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Replace of part of a name')
     parser.add_argument("path", type=str,
                         help="input path dir")
-    parser.add_argument("-s", "--source", nargs='?',
+    parser.add_argument("-rp", "--replace", nargs=2,
                         help="input source")
-    parser.add_argument("-r", "--rep", nargs='?',
+    parser.add_argument("-rg", "--regex", nargs=2,
                         help="input replace")
     args = parser.parse_args()
     path_dir = args.path
-    source = args.source
-    if source is None:
+    if args.regex is None:
         source = input("Введите часть имени: ")
-    rep = args.rep
-    if rep is None:
+    else:
+        source = args.source
+    if args.replace is None:
         rep = input("Введите замену части имени: ")
+    else:
+        rep = args.rep
     names = os.listdir(path_dir)
     zeros = set()
     for name in names:
