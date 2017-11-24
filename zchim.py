@@ -9,7 +9,7 @@ def new_name(old_name, ins):
     return str.join('.', old_name)
 
 
-def rename(path, name, src, rep_src, a=0):
+def rename(path, name, replace, regex, a=0):
     nr = name.replace(src, rep_src)
     while True:
         try:
@@ -36,14 +36,17 @@ if __name__ == '__main__':
                         help="input replace")
     args = parser.parse_args()
     path_dir = args.path
-    if args.regex is None:
-        source = input("Введите часть имени: ")
-    else:
-        source = args.source
-    if args.replace is None:
-        rep = input("Введите замену части имени: ")
-    else:
-        rep = args.rep
+    if args.regex is None and args.replace is None:
+        a = input("Введите номер:\n1) replace\n2) regex\n")
+        if a == 1:
+
+    #     source = input("Введите часть имени: ")
+    # else:
+    #     source = args.source
+    # if args.replace is None:
+    #     rep = input("Введите замену части имени: ")
+    # else:
+    #     rep = args.rep
     names = os.listdir(path_dir)
     zeros = set()
     for name in names:
