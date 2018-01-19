@@ -22,6 +22,7 @@ def f(files, count_one_dir, name_dir, shift_name, length_name):
     except:
         f(files, count_one_dir, name_dir, shift_name, length_name + 1)
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Replace of part of a name')
     parser.add_argument("path", type=str,
