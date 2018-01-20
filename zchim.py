@@ -31,6 +31,5 @@ if __name__ == '__main__':
         else:
             print("Exit\n")
             exit()
-    names = os.listdir(path_dir)
-    for name in names:
+    for name in os.listdir(path_dir):
         r.rename(path_dir, name, args.replace, args.regex)

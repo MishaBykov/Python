@@ -19,7 +19,7 @@ def f(files, count_one_dir, name_dir, shift_name, length_name):
             for file in files[i * count_one_dir:(i + 1) * count_one_dir]:
                 sh.move(path + '\\' + file, path + '\\' + name)
             name_dir += 1
-    except:
+    except sh.Error:
         f(files, count_one_dir, name_dir, shift_name, length_name + 1)
 
 
