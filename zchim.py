@@ -26,10 +26,14 @@ if __name__ == '__main__':
             args.replace = [0, 0]
             args.replace[0] = input("Введите old:\n")
             args.replace[1] = input("Введите new:\n")
+            print(args.replace)
+            input()
         elif n == '2':
             args.regex = [0, 0]
             args.regex[0] = input("Введите pattern:\n")
             args.regex[1] = input("Введите replace:\n")
+            print(args.regex)
+            input()
         else:
             print("Exit\n")
             exit()
