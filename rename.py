@@ -27,10 +27,9 @@ def rename(path, name, replace=None, regex=None, new_path=None):
         except FileExistsError:
             a += 1
         except OSError:
-            break
+            return
     if a == 0:
         try:
             os.rename(os.path.join(new_path, (__new_name(nn, a))), os.path.join(new_path, nn))
         except FileExistsError:
-            os.rename(os.path.join(new_path, (__new_name(nn, a))), os.path.join(new_path, (__new_name(nn, a + 1))))
-            os.rename(os.path.join(new_path, nn), os.path.join(new_path, (__new_name(nn, a))))
+            rename(path, nn, replace, regex, new_path)
