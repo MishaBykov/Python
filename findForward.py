@@ -137,8 +137,7 @@ if __name__ == '__main__':
     if args.pathOutput is None:
         out = input("pathOutput:\n")
     else:
-        out = args.pathInput
-    out = args.pathOutput
+        out = args.pathOutput
     ind_file = 0
     brackets_depth = 0
     ns_path = []
