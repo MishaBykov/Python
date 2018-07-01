@@ -23,15 +23,15 @@ if __name__ == '__main__':
     if args.regex is None and args.replace is None:
         n = input("Введите номер:\n1) replace\n2) regex\nOther Exit\n")
         if n == '1':
-            args.replace = [0, 0]
-            args.replace[0] = input("Введите old:\n")
-            args.replace[1] = input("Введите new:\n")
+            args.replace = []
+            args.replace.append(input("Введите old:\n"))
+            args.replace.append(input("Введите new:\n"))
             print(args.replace)
             input()
         elif n == '2':
-            args.regex = [0, 0]
-            args.regex[0] = input("Введите pattern:\n")
-            args.regex[1] = input("Введите replace:\n")
+            args.regex = []
+            args.regex.append(input("Введите pattern:\n"))
+            args.regex.append(input("Введите replace:\n"))
             print(args.regex)
             input()
         else:
