@@ -151,5 +151,5 @@ if __name__ == '__main__':
             brackets_depth = 0
             ns_active = ns_root
             ns_path = []
-    with open(out, 'w') as d:
+    with open(out, 'w', encoding='utf_8_sig') as d:
         print_ns(d, ns_root)
