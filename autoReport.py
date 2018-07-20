@@ -1,11 +1,8 @@
 class Report():
-    def __init__(self):
-        pass
+    def __init__(self, email):
+        self.email = email
 
     def send(self):
-        pass
-
-    def setup_email(self):
         pass
 
 
