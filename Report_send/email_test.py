@@ -33,7 +33,7 @@ def send_email(addr_to, msg_subj, msg_text, files):
     server.login(addr_from, password)  # Получаем доступ
     server.send_message(msg)  # Отправляем сообщение
     server.quit()  # Выходим
-    # ==========================================================================================================================
+    # =================================================================================================================
 
 
 def process_attachement(msg, files):  # Функция по обработке списка, добавляемых к сообщению файлов
@@ -77,7 +77,7 @@ def attach_file(msg, filepath):  # Функция по добавлению ко
 # Использование функции send_email()
 addr_to = "mike008@bk.ru"  # Получатель
 files = ["/home/misha/PycharmProjects/Python/README.md",  # Список файлов, если вложений нет, то files=[]
-         "/home/misha/PycharmProjects/Python/autoReport.py"]
+         "/home/misha/PycharmProjects/Python/Report.py"]
 # Если нужно отправить все файлы из заданной папки, нужно указать её
 
 send_email(addr_to, "Тема сообщения", "Текст сообщения", files)
