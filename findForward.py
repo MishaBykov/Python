@@ -3,6 +3,8 @@ import codecs
 import re
 
 
+# todo учесть template
+
 def for_file(path_file):
     global string
 
