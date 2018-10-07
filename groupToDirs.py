@@ -1,22 +1,20 @@
 import argparse
 import os
+import shutil as sh
 
 
 def f(path_dir):
-    i = 0
-    while True:
-        files = os.listdir(path)
-        files.sort(reverse=True)
-        while i < len(files):
-            name = files[i].split(sep="(")
-            if len(name) > 1:
-                name = name[0].strip()
-                os.mkdir(name)
-                os.system('move "*' + str(name) + '*" "' + str(name) + '"')
-                break
-            i += 1
-        if i == len(files):
-            break
+    files = os.listdir(path)
+    files.sort(reverse=True)
+    for file in files:
+        name_file = str(file)
+        name_dir = str(file.split(sep="(")[0].strip())
+        if len(name_dir) > 1:
+            try:
+                os.mkdir(name_dir)
+            except FileExistsError:
+                pass
+            sh.move(name_file, str(name_dir))
 
 
 if __name__ == '__main__':
