@@ -10,6 +10,7 @@ def __new_name(old_name, ins):
     return str.join('.', old_name)
 
 
+# todo проверить
 def rename(path, name, replace=None, regex=None, new_path=None):
     if new_path is None:
         new_path = path
@@ -21,15 +22,7 @@ def rename(path, name, replace=None, regex=None, new_path=None):
         nn = re.sub(regex[0], regex[1], name)
     else:
         nn = name
-    while True:
-        try:
-            sh.move(os.path.join(path, name), os.path.join(new_path, (__new_name(nn, a))))
-            break
-        except FileExistsError:
-            a += 1
-    if a == 0:
-        try:
-            # todo проверить существование папки
-            sh.move(os.path.join(new_path, (__new_name(nn, a))), os.path.join(new_path, nn))
-        except FileExistsError:
-            rename(path, nn, replace, regex, new_path)
+    while not os.path.exists(os.path.join(new_path, (__new_name(nn, a)))):
+        a += 1
+    if a != 0:
+        sh.move(os.path.join(path, name), os.path.join(new_path, (__new_name(nn, a))))
