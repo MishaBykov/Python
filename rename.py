@@ -1,5 +1,6 @@
 import os
 import re
+import shutil as sh
 
 
 def __new_name(old_name, ins):
@@ -22,14 +23,13 @@ def rename(path, name, replace=None, regex=None, new_path=None):
         nn = name
     while True:
         try:
-            os.rename(os.path.join(path, name), os.path.join(new_path, (__new_name(nn, a))))
+            sh.move(os.path.join(path, name), os.path.join(new_path, (__new_name(nn, a))))
             break
         except FileExistsError:
             a += 1
-        except OSError:
-            return
     if a == 0:
         try:
-            os.rename(os.path.join(new_path, (__new_name(nn, a))), os.path.join(new_path, nn))
+            # todo проверить существование папки
+            sh.move(os.path.join(new_path, (__new_name(nn, a))), os.path.join(new_path, nn))
         except FileExistsError:
             rename(path, nn, replace, regex, new_path)
