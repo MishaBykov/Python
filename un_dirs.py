@@ -12,6 +12,7 @@ def move_all_from_dir(src, dst):
             r.rename(src, file, new_path=dst)
 
 
+# todo удалять пустые папки
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Replace of part of a name')
     parser.add_argument("path", type=str, help="input path dir")

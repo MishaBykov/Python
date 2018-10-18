@@ -10,19 +10,22 @@ def __new_name(old_name, ins):
     return str.join('.', old_name)
 
 
-# todo проверить
 def rename(path, name, replace=None, regex=None, new_path=None):
     if new_path is None:
         new_path = path
     a = 0
-    nn = ''
+    new_name = ''
     if replace:
-        nn = name.replace(replace[0], replace[1])
+        new_name = name.replace(replace[0], replace[1])
     elif regex:
-        nn = re.sub(regex[0], regex[1], name)
+        new_name = re.sub(regex[0], regex[1], name)
     else:
-        nn = name
-    while not os.path.exists(os.path.join(new_path, (__new_name(nn, a)))):
+        new_name = name
+        # [on_true] if [expression] else [on_false]
+    new_name_ins = os.path.join(new_path, (__new_name(new_name, a)) if a > 0 else new_name)
+    while os.path.exists(new_name_ins):
         a += 1
+        new_name_ins = os.path.join(new_path, (__new_name(new_name, a)) if a > 0 else new_name)
+    sh.move(os.path.join(path, name), new_name_ins)
     if a != 0:
-        sh.move(os.path.join(path, name), os.path.join(new_path, (__new_name(nn, a))))
+        sh.move(os.path.join(new_path, new_name), os.path.join(new_path, __new_name(new_name, 0)))
