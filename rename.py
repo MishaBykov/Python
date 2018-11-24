@@ -14,14 +14,16 @@ def rename(path, name, replace=None, regex=None, new_path=None):
     if new_path is None:
         new_path = path
     a = 0
-    new_name = ''
+    # new_name = ''
     if replace:
         new_name = name.replace(replace[0], replace[1])
     elif regex:
         new_name = re.sub(regex[0], regex[1], name)
     else:
-        new_name = name
+        return
         # [on_true] if [expression] else [on_false]
+    if os.path.join(path, name) == os.path.join(new_path, new_name):
+        return
     new_name_ins = os.path.join(new_path, (__new_name(new_name, a)) if a > 0 else new_name)
     while os.path.exists(new_name_ins):
         a += 1
