@@ -27,14 +27,17 @@ if __name__ == '__main__':
     count_new_dir = count_files // count_one_dir + 1
     length_name = int(len(str(count_new_dir)))
     ind_file = 0
-    for dir_name in range(1, count_new_dir + 1):
+    for dir_name in range(1, count_new_dir):
         dir_name = '0' * (length_name - len(str(dir_name))) + str(dir_name)
         while os.path.exists(dir_name):
             dir_name = '0' + dir_name
         os.mkdir(dir_name)
         renamer = Renamer(path, new_path=dir_name)
         for i in range(0, count_one_dir):
-            renamer.rename(files_list[ind_file])
+            try:
+                renamer.rename(files_list[ind_file])
+            except IndexError:
+                print(ind_file, count_files, len(files_list))
             ind_file += 1
             if ind_file == count_files:
                 break
