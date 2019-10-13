@@ -1,12 +1,6 @@
 import argparse
-import shutil as sh
 from Renamer import Renamer
 import os
-
-
-# def sort_alphabet(input_str):
-#     return str(input_str)[0].lower()
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Replace of part of a name')
@@ -27,7 +21,7 @@ if __name__ == '__main__':
     count_new_dir = count_files // count_one_dir + 1
     length_name = int(len(str(count_new_dir)))
     ind_file = 0
-    for dir_name in range(1, count_new_dir):
+    for dir_name in range(1, count_new_dir + 1):
         dir_name = '0' * (length_name - len(str(dir_name))) + str(dir_name)
         while os.path.exists(dir_name):
             dir_name = '0' + dir_name
