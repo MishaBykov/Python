@@ -23,6 +23,7 @@ class Renamer:
         return str.join('.', old_name)
 
     def __del__(self):
+        print("rename zeros")
         for name in self.zeros_name:
             if os.path.join(self.new_path, name):
                 sh.move(os.path.join(self.new_path, name), os.path.join(self.new_path, Renamer.__new_name_ind(name, 0)))
@@ -39,7 +40,7 @@ class Renamer:
         elif self.new_path:
             new_name = name
             # [on_true] if [expression] else [on_false]
-        if name == new_name:
+        if name == new_name and self.path == self.new_path:
             return
         if os.path.exists(os.path.join(self.new_path, new_name)):
             new_name_ins = new_name
