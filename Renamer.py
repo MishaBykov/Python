@@ -10,7 +10,7 @@ class Renamer:
         self.path = path
         self.replace = replace
         self.regex = regex
-        if self.new_path is None:
+        if new_path is None:
             self.new_path = self.path
         else:
             self.new_path = new_path
@@ -24,7 +24,10 @@ class Renamer:
 
     def __del__(self):
         for name in self.zeros_name:
-            sh.move(os.path.join(self.new_path, name), os.path.join(self.new_path, Renamer.__new_name_ind(name, 0)))
+            if os.path.join(self.new_path, name):
+                sh.move(os.path.join(self.new_path, name), os.path.join(self.new_path, Renamer.__new_name_ind(name, 0)))
+            else:
+                print("not found from [zeros_name]: " + os.path.join(self.new_path, name))
 
     def rename(self, name):
         a = 0
@@ -38,14 +41,12 @@ class Renamer:
             # [on_true] if [expression] else [on_false]
         if name == new_name:
             return
-        path_new_name = os.path.join(self.new_path, new_name)
-        exist_path = os.path.exists(path_new_name)
-        if os.path.exists(exist_path):
-            path_new_name_ins = os.path.join(self.new_path, (Renamer.__new_name_ind(new_name, a)))
-            while os.path.exists(path_new_name_ins):
+        if os.path.exists(os.path.join(self.new_path, new_name)):
+            new_name_ins = new_name
+            while os.path.exists(os.path.join(self.new_path, new_name_ins)) and new_name_ins != name:
                 a += 1
-                path_new_name_ins = os.path.join(self.new_path, (Renamer.__new_name_ind(new_name, a)))
-            self.zeros_name.add(path_new_name)
-            sh.move(os.path.join(self.path, name), path_new_name_ins)
+                new_name_ins = Renamer.__new_name_ind(new_name, a)
+            self.zeros_name.add(new_name)
+            sh.move(os.path.join(self.path, name), os.path.join(self.new_path, new_name_ins))
         else:
-            sh.move(os.path.join(self.path, name), path_new_name)
+            sh.move(os.path.join(self.path, name), os.path.join(self.new_path, new_name))
