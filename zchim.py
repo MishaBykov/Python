@@ -3,7 +3,7 @@ import os
 import rename as r
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Replace of part of a name')
+    parser = argparse.ArgumentParser(description='Name part replacement')
     parser.add_argument("path", type=str, help="input path dir")
     parser.add_argument("-rp", "--replace", nargs=2,
                         help="input source")
