@@ -1,6 +1,6 @@
 import argparse
 import shutil as sh
-import rename as r
+import Renamer as r
 import os
 
 

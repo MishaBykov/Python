@@ -1,6 +1,6 @@
 import argparse
 import os
-import rename as r
+import Renamer as r
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Name part replacement')
