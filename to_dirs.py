@@ -1,5 +1,5 @@
 import argparse
-from Renamer import Renamer
+from Rename import Renamer
 import os
 
 if __name__ == '__main__':

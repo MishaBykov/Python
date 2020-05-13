@@ -1,6 +1,6 @@
 import argparse
 import os
-from Renamer import Renamer
+from Rename import Rename
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Name part replacement')
@@ -37,6 +37,6 @@ if __name__ == '__main__':
         else:
             print("Exit\n")
             exit()
-    renamer = Renamer(path_dir, args.replace, args.regex)
+    rename = Rename(path_dir, args.replace, args.regex)
     for name in os.listdir(path_dir):
-        renamer.rename(name)
+        rename.main(name)
