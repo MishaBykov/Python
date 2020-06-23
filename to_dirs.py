@@ -1,5 +1,5 @@
 import argparse
-from Rename import Renamer
+from Rename import Rename
 import os
 
 if __name__ == '__main__':
@@ -26,10 +26,10 @@ if __name__ == '__main__':
         while os.path.exists(dir_name):
             dir_name = '0' + dir_name
         os.mkdir(dir_name)
-        renamer = Renamer(path, new_path=dir_name)
+        rename = Rename(path, new_path=dir_name)
         for i in range(0, count_one_dir):
             try:
-                renamer.rename(files_list[ind_file])
+                rename.rename(files_list[ind_file])
             except IndexError:
                 print(ind_file, count_files, len(files_list))
             ind_file += 1
