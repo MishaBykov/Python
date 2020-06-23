@@ -15,7 +15,6 @@ class Rename:
             self.new_path = new_path
 
     def __del__(self):
-        print("rename zeros")
         while self.zeros_name:
             name = self.zeros_name.pop()
             if os.path.exists(os.path.join(self.new_path, name)):
