@@ -11,7 +11,8 @@ if __name__ == '__main__':
                         help="input replace")
     args = parser.parse_args()
     path_dir = args.path
-    if args.regex is not None and args.replace is not None:
+    flag_from_keyboard = args.regex is not None and args.replace is not None
+    if flag_from_keyboard:
         n = input("Введите номер:\n1) replace\n2) regex\nOther Exit\n")
         if n == '1':
             args.regex = None
@@ -20,18 +21,13 @@ if __name__ == '__main__':
         else:
             print("Exit\n")
             exit()
-    if args.regex is None and args.replace is None:
         n = input("Введите номер:\n1) replace\n2) regex\nOther Exit\n")
         if n == '1':
-            args.replace = []
-            args.replace.append(input("Введите old:\n"))
-            args.replace.append(input("Введите new:\n"))
+            args.replace = [input("Введите old:\n"), input("Введите new:\n")]
             print(args.replace)
             input()
         elif n == '2':
-            args.regex = []
-            args.regex.append(input("Введите pattern:\n"))
-            args.regex.append(input("Введите replace:\n"))
+            args.regex = [input("Введите pattern:\n"), input("Введите replace:\n")]
             print(args.regex)
             input()
         else:
