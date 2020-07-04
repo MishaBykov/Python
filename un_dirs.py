@@ -10,6 +10,7 @@ def move_all_from_dir(src, dst):
     del rename
 
 
+# todo из всез перенести в одну папку, потом из нее
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Replace of part of a name')
     parser.add_argument("path", type=str, help="input path dir")
