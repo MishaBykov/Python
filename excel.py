@@ -1,16 +1,14 @@
 import openpyxl
 
-id_columns = 'b9', 'b9'
-compare_column = 'I9', 'I9'
+id_columns = 'R9C2', 'R9C2'
+compare_column = 'R9C9', 'R9C9'
 
 wb = openpyxl.load_workbook(filename='оборотно-сальдовая_июнь.xlsx')
 sheet = wb['Report']
 vals = [
-    sheet['i8'].value,
-    # sheet['i8'].value,
+    sheet.cell(9, 2).value,
     '|',
-    # sheet['i9'].value,
-    sheet['i9'].value
+    sheet.cell(9, 9).value
 ]
 
 print(vals)
