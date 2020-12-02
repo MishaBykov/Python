@@ -55,11 +55,16 @@ class Rename:
         self.__destination_path = value
 
     def get_new_name(self, name: str) -> str:
-        new_name = ''
+        new_name = name
         if self.__replace:
             new_name = name.replace(self.__replace[0], self.__replace[1])
         elif self.__regex:
-            new_name = re.sub(self.__regex[0], self.__regex[1], name)
+            reg_compile = ""
+            try:
+                reg_compile = re.compile(self.__regex[0])
+            except re.error:
+                print("Regex error")
+            new_name = re.sub(reg_compile, self.__regex[1], name)
         elif self.__destination_path:
             new_name = name
         return new_name
