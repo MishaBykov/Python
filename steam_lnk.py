@@ -70,14 +70,27 @@ def get_dict_app_manifests(path_manifests: str) -> dict:
     return result
 
 
+def find_fist_exe(path_dir: str) -> str:
+    result = ''
+    for de in os.scandir(path_dir):
+        de: os.DirEntry
+        if result:
+            break
+        if de.is_dir():
+            result = find_fist_exe(de.path)
+        elif de.is_file() and de.name.rsplit('.', 1)[-1] == "exe":
+            result = de.path
+        else:
+            pass
+    return result
+
 
 def main():
+    data_icon = parse_data_icon(paths["icon_test"])
+    data_icon['InternetShortcut']['IconFile'] = paths["exe_test"]
+    write_data_icon(data_icon, paths["icon_test"])
     r = parse_app_manifest(r"D:\FilesGames\SteamLib\steamapps\appmanifest_3720.acf")
-    print(r)
-    # data_icon = parse_data_icon(paths["icon_test"])
-    # data_icon['InternetShortcut']['IconFile'] = paths["exe_test"]
-    # write_data_icon(data_icon, paths["icon_test"])
-
+    path_exe = find_fist_exe(paths["install_games"])
 
 if __name__ == '__main__':
     main()
