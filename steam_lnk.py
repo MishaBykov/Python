@@ -64,14 +64,19 @@ def get_dict_app_manifests(path_manifests: str) -> dict:
     result = {}
     for de in os.scandir(path_manifests):
         de: os.DirEntry
-
+        if de.is_file() and de.name.rsplit('.', 1) == "acf":
+            data_manifest = parse_app_manifest(de.path)
+            result[data_manifest["appid"]] = data_manifest
     return result
 
 
+
 def main():
-    data_icon = parse_data_icon(paths["icon_test"])
-    data_icon['InternetShortcut']['IconFile'] = paths["exe_test"]
-    write_data_icon(data_icon, paths["icon_test"])
+    r = parse_app_manifest(r"D:\FilesGames\SteamLib\steamapps\appmanifest_3720.acf")
+    print(r)
+    # data_icon = parse_data_icon(paths["icon_test"])
+    # data_icon['InternetShortcut']['IconFile'] = paths["exe_test"]
+    # write_data_icon(data_icon, paths["icon_test"])
 
 
 if __name__ == '__main__':
