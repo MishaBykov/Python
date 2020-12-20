@@ -78,7 +78,7 @@ def get_app_manifests(path_manifests: str) -> dict:
         de: os.DirEntry
         if de.is_file() and de.name.rsplit('.', 1)[-1] == "acf":
             data_manifest = parse_app_manifest(de.path)
-            result[data_manifest["appid"]] = data_manifest
+            result[data_manifest["AppState"]["appid"]] = data_manifest
     return result
 
 
