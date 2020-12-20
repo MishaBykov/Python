@@ -23,7 +23,7 @@ def parse_data_icon(path_icon: str) -> dict:
     result = {}
     key_root = ''
     if os.path.exists(path_icon):
-        result["path_icon"] = path_icon
+        result["path"] = path_icon
         with open(path_icon) as file_ico:
             for string in file_ico:
                 string = string.strip()
@@ -39,7 +39,7 @@ def parse_data_icon(path_icon: str) -> dict:
 def write_data_icon(data_icon: dict, path_icon: str):
     strings = []
     for key1 in data_icon:
-        if key1 == "path_icon":
+        if key1 == "path":
             continue
         strings.append('[' + key1 + ']')
         for key2 in data_icon[key1]:
@@ -54,7 +54,12 @@ def parse_app_manifest(path_manifest: str) -> dict:
     with open(path_manifest) as file:
         current_dict = result
         for string in file:
-            string = string.replace('"', '').split()
+            string = string.strip().split('"')
+            string = list(filter(lambda x: x != '', string))
+            if string[0] != string[-1]:
+                string = [string[0], string[-1]]
+            else:
+                string = [string[0]]
             split_len = len(string)
             if split_len == 1:
                 if string[0] == '}':
@@ -82,14 +87,14 @@ def get_app_manifests(path_manifests: str) -> dict:
     return result
 
 
-def find_fist_exe(path_dir: str) -> str:
+def find_last_exe(path_dir: str) -> str:
     result = ''
     for de in os.scandir(path_dir):
         de: os.DirEntry
-        if result:
-            break
         if de.is_dir():
-            result = find_fist_exe(de.path)
+            temp = find_last_exe(de.path)
+            if temp != '':
+                result = temp
         elif de.is_file() and de.name.rsplit('.', 1)[-1] == "exe":
             result = de.path
         else:
@@ -101,12 +106,15 @@ def main():
     icons_data = list_icons_data(paths["icon_dirs"])
     app_manifests_data = get_app_manifests(paths["app_manifests"])
     for game_id in icons_data.keys():
-        install_dir = app_manifests_data[game_id]["AppState"]["installdir"]
-        path_fist_exe = find_fist_exe(os.path.join(paths["install_games"], install_dir))
-        icons_data[game_id]["InternetShortcut"]["IconFile"] = path_fist_exe
-        if icons_data[game_id]["InternetShortcut"]["IconIndex"] != '0':
-            icons_data[game_id]["InternetShortcut"]["IconIndex"] = '0'
-        write_data_icon(icons_data[game_id], icons_data[game_id]["path_icon"])
+        try:
+            install_dir = app_manifests_data[game_id]["AppState"]["installdir"]
+            path_last_exe = find_last_exe(os.path.join(paths["install_games"], install_dir))
+            icons_data[game_id]["InternetShortcut"]["IconFile"] = path_last_exe
+            if icons_data[game_id]["InternetShortcut"]["IconIndex"] != '0':
+                icons_data[game_id]["InternetShortcut"]["IconIndex"] = '0'
+            write_data_icon(icons_data[game_id], icons_data[game_id]["path"])
+        except KeyError as e:
+            print(icons_data[game_id]['path'])
 
 
 if __name__ == '__main__':
