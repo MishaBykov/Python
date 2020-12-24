@@ -1,7 +1,7 @@
 import os
 
 paths = {
-    "icon_dirs": r"test_icon",
+    "icon_dirs": r"test",
     "app_manifests": r"D:\FilesGames\SteamLib\steamapps",
     "install_games": r"D:\FilesGames\SteamLib\steamapps\common"
 }
@@ -87,19 +87,34 @@ def get_app_manifests(path_manifests: str) -> dict:
     return result
 
 
-def find_last_exe(path_dir: str) -> str:
-    result = ''
-    for de in os.scandir(path_dir):
-        de: os.DirEntry
-        if de.is_dir():
-            temp = find_last_exe(de.path)
-            if temp != '':
-                result = temp
-        elif de.is_file() and de.name.rsplit('.', 1)[-1] == "exe":
-            result = de.path
-        else:
-            pass
-    return result
+def find_exe(word_find: set, path_dir: str) -> str:
+    result = {"data": '', "priority": 0}
+    queue_de = list(os.scandir(path_dir))
+    while queue_de:
+        top_element: os.DirEntry
+        top_element = queue_de.pop(0)
+        if top_element.is_dir():
+            queue_de.extend(os.scandir(top_element.path))
+        elif top_element.is_file() and top_element.name.rsplit('.', 1)[-1] == "exe":
+            priority = 0
+            for word in word_find:
+                word: str
+                if word.lower() in top_element.name.lower():
+                    priority += 1
+            if priority > result['priority']:
+                result['data'] = top_element.path
+                result['priority'] = priority
+    return result["data"]
+
+
+def get_find_word(words: list) -> set:
+    result = []
+    words = set(words)
+    for word in words:
+        word: str
+        result.append("".join(map(lambda x: x[0], word.split())))
+        result.extend(word.split())
+    return set(result)
 
 
 def main():
@@ -108,8 +123,13 @@ def main():
     for game_id in icons_data.keys():
         try:
             install_dir = app_manifests_data[game_id]["AppState"]["installdir"]
-            path_last_exe = find_last_exe(os.path.join(paths["install_games"], install_dir))
-            icons_data[game_id]["InternetShortcut"]["IconFile"] = path_last_exe
+            name = app_manifests_data[game_id]["AppState"]["name"]
+            path_exe = find_exe(get_find_word([install_dir, name]), os.path.join(paths["install_games"], install_dir))
+            if not path_exe:
+                print(name)
+            else:
+                print(path_exe)
+            icons_data[game_id]["InternetShortcut"]["IconFile"] = path_exe
             if icons_data[game_id]["InternetShortcut"]["IconIndex"] != '0':
                 icons_data[game_id]["InternetShortcut"]["IconIndex"] = '0'
             write_data_icon(icons_data[game_id], icons_data[game_id]["path"])
