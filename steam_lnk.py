@@ -1,7 +1,7 @@
 import os
 
 paths = {
-    "icon_dirs": r"test",
+    "icon_dirs": r"D:\games_lnk",
     "app_manifests": r"D:\FilesGames\SteamLib\steamapps",
     "install_games": r"D:\FilesGames\SteamLib\steamapps\common"
 }
