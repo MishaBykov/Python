@@ -1,6 +1,7 @@
 import os
 import re
 import shutil as sh
+import subprocess
 
 
 class Rename:
@@ -8,8 +9,9 @@ class Rename:
     __replace: list
     __source_path: str
     __destination_path: str
+    __use_git_rename: bool
 
-    def __init__(self, source_path=None, replace=None, regex=None, destination_path=None):
+    def __init__(self, source_path=None, replace=None, regex=None, destination_path=None, use_git_rename=False):
         self.__zeros_name = set()
         self.__source_path = source_path
         self.__replace = replace
@@ -18,11 +20,26 @@ class Rename:
             self.__destination_path = self.__source_path
         else:
             self.__destination_path = destination_path
+        if use_git_rename:
+            def git_move(source_file, destination_file):
+                os.chdir(os.path.dirname(source_file))
+                try:
+                    subprocess.check_call(["git", "mv", source_file, destination_file])
+                except subprocess.CalledProcessError:
+                    print("git not move: " + source_file + "->" + destination_file)
+
+            self.rename_func = git_move
+        else:
+            self.rename_func = sh.move
 
     def __del__(self):
         self.clear_zeros()
 
     @property
+    def replace(self):
+        return self.__replace
+
+    @replace.getter
     def replace(self):
         return self.__replace
 
@@ -34,6 +51,10 @@ class Rename:
     def regex(self):
         return self.__regex
 
+    @regex.getter
+    def regex(self):
+        return self.__regex
+
     @regex.setter
     def regex(self, value):
         self.__regex = value
@@ -42,11 +63,19 @@ class Rename:
     def source_path(self):
         return self.__source_path
 
+    @source_path.getter
+    def source_path(self):
+        return self.__source_path
+
     @source_path.setter
     def source_path(self, value):
         self.__source_path = value
 
     @property
+    def destination_path(self):
+        return self.__destination_path
+
+    @destination_path.getter
     def destination_path(self):
         return self.__destination_path
 
@@ -79,9 +108,9 @@ class Rename:
                 a += 1
                 new_name_ins = Rename.__new_name_ind(new_name, a)
             self.__zeros_name.add(new_path_new_name)
-            sh.move(source_path_name, os.path.join(self.__destination_path, new_name_ins))
+            self.rename_func(source_path_name, os.path.join(self.__destination_path, new_name_ins))
         else:
-            sh.move(os.path.join(self.__source_path, name), new_path_new_name)
+            self.rename_func(os.path.join(self.__source_path, name), new_path_new_name)
 
     def run(self, name: str):
         new_name = self.get_new_name(name)

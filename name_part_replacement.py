@@ -5,6 +5,7 @@ from Rename import Rename
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Name part replacement')
     parser.add_argument("path", type=str, help="input path dir")
+    parser.add_argument("-g", "--git", action='store_true')
     parser.add_argument("-rp", "--replace", nargs=2,
                         help="input source")
     parser.add_argument("-rg", "--regex", nargs=2,
@@ -24,6 +25,6 @@ if __name__ == '__main__':
             print("Exit\n")
             exit()
         input()
-    rename = Rename(path_dir, args.replace, args.regex)
+    rename = Rename(path_dir, args.replace, args.regex, use_git_rename=args.git)
     for name in os.listdir(path_dir):
         rename.run(name)
