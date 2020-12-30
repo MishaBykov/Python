@@ -26,4 +26,4 @@ if __name__ == '__main__':
         input()
     rename = Rename(path_dir, args.replace, args.regex)
     for name in os.listdir(path_dir):
-        rename.main(name)
+        rename.run(name)

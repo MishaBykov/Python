@@ -83,7 +83,7 @@ class Rename:
         else:
             sh.move(os.path.join(self.__source_path, name), new_path_new_name)
 
-    def main(self, name: str):
+    def run(self, name: str):
         new_name = self.get_new_name(name)
         if self.__source_path is None or name == new_name and self.__source_path == self.__destination_path:
             print('skip:name= ' + name)

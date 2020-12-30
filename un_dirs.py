@@ -11,6 +11,6 @@ if __name__ == '__main__':
         if i.is_dir():
             r.source_path = i.path
             for j in os.listdir(i.path):
-                r.main(j)
+                r.run(j)
             r.destination_delete_object(i.path)
     del r
