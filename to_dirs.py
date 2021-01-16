@@ -29,7 +29,7 @@ if __name__ == '__main__':
         rename = Rename(path, destination_path=dir_name)
         for i in range(0, count_one_dir):
             try:
-                rename.run(files_list[ind_file])
+                rename.rename(files_list[ind_file])
             except IndexError:
                 print(ind_file, count_files, len(files_list))
             ind_file += 1

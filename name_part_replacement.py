@@ -27,4 +27,4 @@ if __name__ == '__main__':
         input()
     rename = Rename(path_dir, args.replace, args.regex, use_git_rename=args.git)
     for name in os.listdir(path_dir):
-        rename.run(name)
+        rename.rename(name)

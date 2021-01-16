@@ -98,7 +98,12 @@ class Rename:
             new_name = name
         return new_name
 
-    def rename(self, name: str, new_name):
+    def rename(self, name: str, new_name: str = None):
+        if new_name is None:
+            new_name = self.get_new_name(name)
+            if self.__source_path is None or name == new_name and self.__source_path == self.__destination_path:
+                print('skip:name= ' + name)
+                return
         new_path_new_name = os.path.join(self.__destination_path, new_name)
         source_path_name = os.path.join(self.__source_path, name)
         if os.path.exists(new_path_new_name):
@@ -111,13 +116,6 @@ class Rename:
             self.rename_func(source_path_name, os.path.join(self.__destination_path, new_name_ins))
         else:
             self.rename_func(os.path.join(self.__source_path, name), new_path_new_name)
-
-    def run(self, name: str):
-        new_name = self.get_new_name(name)
-        if self.__source_path is None or name == new_name and self.__source_path == self.__destination_path:
-            print('skip:name= ' + name)
-            return
-        self.rename(name, new_name)
 
     @staticmethod
     def __new_name_ind(old_name: str, ins: int) -> str:
