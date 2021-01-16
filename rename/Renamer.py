@@ -4,7 +4,7 @@ import shutil as sh
 import subprocess
 
 
-class Rename:
+class Renamer:
     __regex: list
     __replace: list
     __source_path: str
@@ -111,7 +111,7 @@ class Rename:
             a = 0
             while os.path.exists(os.path.join(self.__destination_path, new_name_ins)):  # and new_name_ins != name:
                 a += 1
-                new_name_ins = Rename.__new_name_ind(new_name, a)
+                new_name_ins = Renamer.__new_name_ind(new_name, a)
             self.__zeros_name.add(new_path_new_name)
             self.rename_func(source_path_name, os.path.join(self.__destination_path, new_name_ins))
         else:
