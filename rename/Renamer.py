@@ -11,7 +11,7 @@ class Renamer:
     __destination_path: str
     __use_git_rename: bool
 
-    def __init__(self, source_path=None, replace=None, regex=None, destination_path=None, use_git_rename=False):
+    def __init__(self, source_path=None, replace=None, regex=None, destination_path=None, use_git_mv=False):
         self.__zeros_name = set()
         self.__source_path = source_path
         self.__replace = replace
@@ -20,17 +20,10 @@ class Renamer:
             self.__destination_path = self.__source_path
         else:
             self.__destination_path = destination_path
-        if use_git_rename:
-            def git_move(source_file, destination_file):
-                os.chdir(os.path.dirname(source_file))
-                try:
-                    subprocess.check_call(["git", "mv", source_file, destination_file])
-                except subprocess.CalledProcessError:
-                    print("git not move: " + source_file + "->" + destination_file)
-
-            self.rename_func = git_move
+        if use_git_mv:
+            self.mv_func = Renamer.git_mv
         else:
-            self.rename_func = sh.move
+            self.mv_func = Renamer.os_mv
 
     def __del__(self):
         self.clear_zeros()
@@ -112,7 +105,7 @@ class Renamer:
                 i += 1
                 destination_path_new_name = os.path.join(self.__destination_path, Renamer.__new_name_ind(new_name, i))
             self.__zeros_name.add(destination_path_new_name)
-        self.rename_func(source_path_name, destination_path_new_name)
+        self.mv_func(source_path_name, destination_path_new_name)
 
     @staticmethod
     def __new_name_ind(old_name: str, ins: int) -> str:
@@ -146,3 +139,15 @@ class Renamer:
             os.rmdir(path_name)
             if path_name == self.__source_path:
                 self.source_path = ''
+
+    @staticmethod
+    def git_mv(source_file, destination_file):
+        os.chdir(os.path.dirname(source_file))
+        try:
+            subprocess.check_call(["git", "mv", source_file, destination_file])
+        except subprocess.CalledProcessError:
+            print("git not move: " + source_file + "->" + destination_file)
+
+    @staticmethod
+    def os_mv(source_file, destination_file):
+        sh.move(source_file, destination_file)

@@ -27,7 +27,7 @@ if __name__ == '__main__':
                 print("Exit\n")
                 exit()
             input()
-        renamer = Renamer(path_dir, args.replace, args.regex, use_git_rename=args.git)
+        renamer = Renamer(path_dir, args.replace, args.regex, use_git_mv=args.git)
         for name in os.listdir(path_dir):
             renamer.rename(name)
         if not args.session:
