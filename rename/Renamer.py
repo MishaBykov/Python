@@ -104,18 +104,15 @@ class Renamer:
             if self.__source_path is None or name == new_name and self.__source_path == self.__destination_path:
                 print('skip:name= ' + name)
                 return
-        new_path_new_name = os.path.join(self.__destination_path, new_name)
+        destination_path_new_name = os.path.join(self.__destination_path, new_name)
         source_path_name = os.path.join(self.__source_path, name)
-        if os.path.exists(new_path_new_name):
-            new_name_ins = new_name
-            a = 0
-            while os.path.exists(os.path.join(self.__destination_path, new_name_ins)):  # and new_name_ins != name:
-                a += 1
-                new_name_ins = Renamer.__new_name_ind(new_name, a)
-            self.__zeros_name.add(new_path_new_name)
-            self.rename_func(source_path_name, os.path.join(self.__destination_path, new_name_ins))
-        else:
-            self.rename_func(os.path.join(self.__source_path, name), new_path_new_name)
+        if os.path.exists(destination_path_new_name):
+            i = 0
+            while os.path.exists(destination_path_new_name):  # and new_name_ins != name:
+                i += 1
+                destination_path_new_name = os.path.join(self.__destination_path, Renamer.__new_name_ind(new_name, i))
+            self.__zeros_name.add(destination_path_new_name)
+        self.rename_func(source_path_name, destination_path_new_name)
 
     @staticmethod
     def __new_name_ind(old_name: str, ins: int) -> str:
