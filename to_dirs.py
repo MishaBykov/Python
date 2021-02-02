@@ -18,8 +18,8 @@ if __name__ == '__main__':
     files_list = sorted(os.listdir(path), key=str.lower)
     count_files = len(files_list)
     os.chdir(path)
-    count_new_dir = count_files // count_one_dir + 1
-    length_name = int(len(str(count_new_dir)))
+    count_new_dir = count_files // count_one_dir + (1 if count_files % count_one_dir != 0 else 0)
+    length_name = len(str(count_new_dir))
     ind_file = 0
     for dir_name in range(1, count_new_dir + 1):
         dir_name = '0' * (length_name - len(str(dir_name))) + str(dir_name)
