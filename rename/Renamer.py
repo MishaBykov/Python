@@ -1,21 +1,30 @@
+import ast
 import os
 import re
 import shutil as sh
 import subprocess
+import sys
 
 
 class Renamer:
+    __STATE_PATH_NAME_FILE = os.path.join(os.path.dirname(sys.argv[0]), 'change_state')
+
     __regex: list
     __replace: list
     __source_path: str
     __destination_path: str
     __use_git_rename: bool
+    __changes: list
+    __save_state = bool
 
-    def __init__(self, source_path=None, replace=None, regex=None, destination_path=None, use_git_mv=False):
+    def __init__(self, source_path=None, replace=None, regex=None, destination_path=None, use_git_mv=False,
+                 save_state=True):
+        self.__save_state = save_state
         self.__zeros_name = set()
         self.__source_path = source_path
         self.__replace = replace
         self.__regex = regex
+        self.__changes = []
         if destination_path is None:
             self.__destination_path = self.__source_path
         else:
@@ -24,9 +33,12 @@ class Renamer:
             self.mv_func = Renamer.git_mv
         else:
             self.mv_func = Renamer.os_mv
+        if not save_state:
+            self.new_state = Renamer.not_new_state
 
     def __del__(self):
         self.clear_zeros()
+        self.in_file()
 
     @property
     def replace(self):
@@ -106,6 +118,12 @@ class Renamer:
                 destination_path_new_name = os.path.join(self.__destination_path, Renamer.__new_name_ind(new_name, i))
             self.__zeros_name.add(destination_path_new_name)
         self.mv_func(source_path_name, destination_path_new_name)
+        self.new_state(source_path_name, destination_path_new_name)
+
+    def rename_mass(self):
+        self.new_change()
+        for name in os.listdir(self.__destination_path):
+            self.rename(name)
 
     @staticmethod
     def __new_name_ind(old_name: str, ins: int) -> str:
@@ -151,3 +169,69 @@ class Renamer:
     @staticmethod
     def os_mv(source_file, destination_file):
         sh.move(source_file, destination_file)
+
+    def revert_last_state(self):
+        if self.__changes:
+            change = self.__changes.pop()
+            for i in reversed(change):
+                if os.path.exists(i['new']) and not os.path.exists(i['old']):
+                    sh.move(i['new'], i['old'])
+                else:
+                    print("skip:{} -> {}".format(i['new'], i['old']))
+
+    @staticmethod
+    def revert_last_state_file():
+        with open(Renamer.__STATE_PATH_NAME_FILE, 'r', encoding='utf-8') as file_in:
+            try:
+                state = ast.literal_eval(file_in.readline())
+            except SyntaxError:
+                print("file parse error")
+                return
+            for s in state:
+                if os.path.exists(s['new']) and not os.path.exists(s['old']):
+                    sh.move(s['new'], s['old'])
+                else:
+                    print("skip:{} -> {}".format(s['new'], s['old']))
+            data = file_in.readlines()
+        with open(Renamer.__STATE_PATH_NAME_FILE, 'w', encoding='utf-8') as file_in:
+            file_in.writelines(''.join(data))
+
+    def new_change(self):
+        self.__changes.append([])
+
+    def new_state(self, old_name, new_name):
+        if not self.__changes:
+            self.new_change()
+        self.__changes[-1].append({'old': old_name, 'new': new_name})
+
+    def not_new_state(self, old_name, new_name):
+        pass
+
+    def in_file(self):
+        if not self.__changes:
+            return
+        data = ''
+        if os.path.exists(Renamer.__STATE_PATH_NAME_FILE):
+            with open(Renamer.__STATE_PATH_NAME_FILE, 'r', encoding='utf-8') as file_in:
+                data = file_in.readlines()
+        with open(Renamer.__STATE_PATH_NAME_FILE, 'w', encoding='utf-8') as file_in:
+            for i in reversed(self.__changes):
+                file_in.write(str(i) + '\n')
+            file_in.writelines(data)
+
+    def out_file(self):
+        with open(Renamer.__STATE_PATH_NAME_FILE, 'r+', encoding='utf-8') as file_out:
+            for i in file_out:
+                if i == '' or not self.__changes:
+                    self.new_change()
+                self.__changes[-1].append(ast.literal_eval(i))
+
+    def clear_states(self):
+        self.__changes = []
+        print('clear states')
+
+    @staticmethod
+    def clear_states():
+        if os.path.exists(Renamer.__STATE_PATH_NAME_FILE):
+            os.remove(Renamer.__STATE_PATH_NAME_FILE)
+        print('clear states')
