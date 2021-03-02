@@ -8,6 +8,7 @@ if __name__ == '__main__':
                         help="input path dir")
     parser.add_argument("-cod", "--count_one_dir", nargs='?',
                         help="input countOneDir ")
+    parser.add_argument("-g", "--git", action='store_true')
     args = parser.parse_args()
     path = args.path
     if args.count_one_dir is None:
@@ -26,7 +27,7 @@ if __name__ == '__main__':
         while os.path.exists(dir_name):
             dir_name = '0' + dir_name
         os.mkdir(dir_name)
-        renamer = Renamer(path, destination_path=dir_name)
+        renamer = Renamer(path, destination_path=dir_name, use_git_rename=args.git)
         for i in range(0, count_one_dir):
             try:
                 renamer.rename(files_list[ind_file])
