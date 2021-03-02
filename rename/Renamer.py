@@ -122,7 +122,7 @@ class Renamer:
 
     def rename_mass(self):
         self.new_change()
-        for name in os.listdir(self.__destination_path):
+        for name in os.listdir(self.__source_path):
             self.rename(name)
 
     @staticmethod
