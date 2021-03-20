@@ -112,11 +112,11 @@ class Renamer:
         destination_path_new_name = os.path.join(self.__destination_path, new_name)
         source_path_name = os.path.join(self.__source_path, name)
         if os.path.exists(destination_path_new_name):
+            self.__zeros_name.add(destination_path_new_name)
             i = 0
             while os.path.exists(destination_path_new_name):  # and new_name_ins != name:
                 i += 1
                 destination_path_new_name = os.path.join(self.__destination_path, Renamer.__new_name_ind(new_name, i))
-            self.__zeros_name.add(destination_path_new_name)
         self.mv_func(source_path_name, destination_path_new_name)
         self.new_state(source_path_name, destination_path_new_name)
 
@@ -187,7 +187,7 @@ class Renamer:
             except SyntaxError:
                 print("file parse error")
                 return
-            for s in state:
+            for s in reversed(state):
                 if os.path.exists(s['new']) and not os.path.exists(s['old']):
                     sh.move(s['new'], s['old'])
                 else:
