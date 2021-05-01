@@ -165,7 +165,7 @@ class Renamer:
         try:
             subprocess.check_call(["git", "mv", source_file, destination_file])
         except subprocess.CalledProcessError:
-            print("git not move: " + source_file + "->" + destination_file)
+            print("git not rename: " + source_file + "->" + destination_file, file=file_log)
 
     @staticmethod
     def os_mv(source_file, destination_file, file_log=sys.stdout):
