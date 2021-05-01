@@ -18,7 +18,7 @@ class Renamer:
     __save_state = bool
 
     def __init__(self, source_path=None, replace=None, regex=None, destination_path=None, use_git_mv=False,
-                 save_state=True):
+                 save_state=True, file_log=sys.stdout):
         self.__save_state = save_state
         self.__zeros_name = set()
         self.__source_path = source_path
@@ -35,6 +35,7 @@ class Renamer:
             self.mv_func = Renamer.os_mv
         if not save_state:
             self.new_state = Renamer.not_new_state
+        self.__file_log = file_log
 
     def __del__(self):
         self.clear_zeros()
@@ -97,7 +98,7 @@ class Renamer:
             try:
                 reg_compile = re.compile(self.__regex[0])
             except re.error:
-                print("Regex error")
+                print("Regex error", file=self.__file_log)
             new_name = re.sub(reg_compile, self.__regex[1], name)
         elif self.__destination_path:
             new_name = name
@@ -106,9 +107,9 @@ class Renamer:
     def rename(self, name: str, new_name: str = None):
         if new_name is None:
             new_name = self.get_new_name(name)
-            if self.__source_path is None or name == new_name and self.__source_path == self.__destination_path:
-                print('skip:name= ' + name)
-                return
+        if self.__source_path is None or name == new_name and self.__source_path == self.__destination_path:
+            print('skip: name = ' + name, file=self.__file_log)
+            return
         destination_path_new_name = os.path.join(self.__destination_path, new_name)
         source_path_name = os.path.join(self.__source_path, name)
         if os.path.exists(destination_path_new_name):
@@ -117,7 +118,7 @@ class Renamer:
             while os.path.exists(destination_path_new_name):  # and new_name_ins != name:
                 i += 1
                 destination_path_new_name = os.path.join(self.__destination_path, Renamer.__new_name_ind(new_name, i))
-        self.mv_func(source_path_name, destination_path_new_name)
+        self.mv_func(source_path_name, destination_path_new_name, self.__file_log)
         self.new_state(source_path_name, destination_path_new_name)
 
     def rename_mass(self):
@@ -159,7 +160,7 @@ class Renamer:
                 self.source_path = ''
 
     @staticmethod
-    def git_mv(source_file, destination_file):
+    def git_mv(source_file, destination_file, file_log=sys.stdout):
         os.chdir(os.path.dirname(source_file))
         try:
             subprocess.check_call(["git", "mv", source_file, destination_file])
@@ -167,8 +168,11 @@ class Renamer:
             print("git not move: " + source_file + "->" + destination_file)
 
     @staticmethod
-    def os_mv(source_file, destination_file):
-        sh.move(source_file, destination_file)
+    def os_mv(source_file, destination_file, file_log=sys.stdout):
+        try:
+            sh.move(source_file, destination_file)
+        except OSError:
+            print("not rename: " + source_file + "->" + destination_file, file=file_log)
 
     def revert_last_state(self):
         if self.__changes:
@@ -177,21 +181,21 @@ class Renamer:
                 if os.path.exists(i['new']) and not os.path.exists(i['old']):
                     sh.move(i['new'], i['old'])
                 else:
-                    print("skip:{} -> {}".format(i['new'], i['old']))
+                    print("skip:{} -> {}".format(i['new'], i['old']), file=self.__file_log)
 
     @staticmethod
-    def revert_last_state_file():
+    def revert_last_state_file(file_log=sys.stdout):
         with open(Renamer.__STATE_PATH_NAME_FILE, 'r', encoding='utf-8') as file_in:
             try:
                 state = ast.literal_eval(file_in.readline())
             except SyntaxError:
-                print("file parse error")
+                print("file parse error", file=file_log)
                 return
             for s in reversed(state):
                 if os.path.exists(s['new']) and not os.path.exists(s['old']):
                     sh.move(s['new'], s['old'])
                 else:
-                    print("skip:{} -> {}".format(s['new'], s['old']))
+                    print("skip:{} -> {}".format(s['new'], s['old']), file=file_log)
             data = file_in.readlines()
         with open(Renamer.__STATE_PATH_NAME_FILE, 'w', encoding='utf-8') as file_in:
             file_in.writelines(''.join(data))
@@ -228,10 +232,10 @@ class Renamer:
 
     def clear_states(self):
         self.__changes = []
-        print('clear states')
+        print('clear states', file=self.__file_log)
 
     @staticmethod
-    def clear_states():
+    def clear_states(file_log=sys.stdout):
         if os.path.exists(Renamer.__STATE_PATH_NAME_FILE):
             os.remove(Renamer.__STATE_PATH_NAME_FILE)
-        print('clear states')
+        print('clear states', file=file_log)
