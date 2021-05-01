@@ -4,7 +4,7 @@ from rename.Renamer import Renamer
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Name part replacement')
-    parser.add_argument("-p", "--path", nargs=1, help="input path")
+    parser.add_argument("-p", "--path", type=str, help="input path")
     parser.add_argument("-r", "--revert", action='store_true')
     parser.add_argument("-g", "--git", action='store_true')
     parser.add_argument("-s", "--session", action='store_true')
@@ -13,9 +13,7 @@ if __name__ == '__main__':
     parser.add_argument("-rg", "--regex", nargs=2,
                         help="input replace")
     args = parser.parse_args()
-    if args.path is None:
-        exit()
-    path_dir = args.path[-1] if args.path else ""
+    path_dir = args.path
     if args.revert:
         Renamer.revert_last_state_file()
         exit()
