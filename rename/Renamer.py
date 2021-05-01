@@ -138,15 +138,15 @@ class Renamer:
         while self.__zeros_name:
             path_name = self.__zeros_name.pop()
             path = os.path.dirname(path_name)
-            self.source_path = path
-            self.destination_path = path
+            self.__source_path = path
+            self.__destination_path = path
             name = os.path.basename(path_name)
             if os.path.exists(path_name):
                 self.rename(name, self.__new_name_ind(name, 0))
             else:
-                print("not found from [zeros_name]: " + path_name)
-        self.source_path = back_up_source
-        self.destination_path = back_up_new
+                print("not found from [zeros_name]: " + path_name, file=self.__file_log)
+        self.__source_path = back_up_source
+        self.__destination_path = back_up_new
 
     def destination_delete_object(self, name):
         if name in self.__zeros_name:
