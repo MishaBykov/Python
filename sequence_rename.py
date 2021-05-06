@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
+import argparse
 import os
-import shutil as sh
 import xml.etree.ElementTree as ET
-import zipfile
-from typing import Optional
 
 from rename.Renamer import Renamer
 
 
 def find_sequence(xml_file: str):
     xpath = ".//{*}description/{*}title-info/{*}sequence"
-    # "/description/title-info/sequence"
-    # xml_namespaces = dict([node for _, node in ET.iterparse(xml_file, events=['start-ns'])])
-    # sequence = root.find(xpath, xml_namespaces)
     try:
         root = ET.parse(xml_file).getroot()
     except ET.ParseError as e:
@@ -39,11 +34,6 @@ def dir_root_books(dir_path: str):
                     sequence_files_fb2[sequence["name"]].append((entry, sequence))
                 else:
                     sequence_files_fb2[sequence["name"]] = [(entry, sequence)]
-            else:
-                if zipfile.is_zipfile(zip_file):
-                    pass
-                else:
-                    pass
 
     r = Renamer(dir_path)
     for key in sequence_files_fb2:
@@ -58,10 +48,8 @@ def dir_root_books(dir_path: str):
 
 
 if __name__ == "__main__":
-    dir_root = r"C:\Users\misha\Desktop\ХЛ"
-    zip_file = r'C:\Users\misha\Desktop\ХЛ\СОГ\СОГ_1.fb2'
-    print(zipfile.is_zipfile(zip_file))
-    with zipfile.ZipFile(zip_file, 'r') as my_zip:
-        print(my_zip.read())
+    parser = argparse.ArgumentParser(description='Name part replacement')
+    parser.add_argument("-drp", "--dit_root_path", type=str, help="input path")
+    args = parser.parse_args()
 
-    # dir_root_books(dir_root)
+    dir_root_books(args.dit_root_path)
