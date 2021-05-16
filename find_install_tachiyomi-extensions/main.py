@@ -1,5 +1,6 @@
 import os
 import subprocess
+import json
 
 path_git_temp_tach_ext = r"/home/misha/repos/tachiyomi-extensions"
 path_name_tach_ext = "/home/misha/PycharmProjects/Python/find_install_tachiyomi-extensions/_name_tachiyomi-extensions.txt"
@@ -10,18 +11,6 @@ prefixFileName = "tachiyomi-"
 
 example_app_name = "Tachiyomi: Bato.to  1.2.7"
 
-
-# versionName "$libVersion.$extVersionCode"
-
-# ext {
-#     extName = 'Bato.to'
-#     pkgNameSuffix = 'all.batoto'
-#     extClass = '.BatoToFactory'
-#     extVersionCode = 9
-#     libVersion = '1.2'
-#     containsNsfw = true
-# }
-#  обойти build.gradle
 
 class Tree:
     def __init__(self):
@@ -55,33 +44,21 @@ with open(path_name_tach_ext) as file:
     for line in file:
         tree.add(line)
 
-if not os.path.exists("src"):
-    subprocess.check_call(["git", "checkout", "master"])
-for root, dirs, files in os.walk("src"):
-    for file in files:
-        if file != "build.gradle":
-            continue
-        with open(os.path.join(root, file)) as open_file:
-            variables = {}
-            for line in open_file:
-                if '=' not in line:
-                    continue
-                name, value = line.split('=', maxsplit=1)
-                name = name.strip()
-                value = value.strip().strip("'").strip('"')
-                variables[name] = value
-            if "extName" in variables:
-                if tree.find(prefixAppName + variables['extName']):
-                    name_files.append(prefixFileName + variables['pkgNameSuffix']
-                                      + '-v' + variables['libVersion'] + '.' + variables['extVersionCode'] + '.apk')
-# subprocess.check_call(["git", "checkout", "repo"])
-# os.chdir('apk')
-# print("count files " + str(len(name_files)))
-# for file in name_files:
-#     if os.path.exists(file):
-#         print('ok ' + file)
-#     else:
-#         print("no " + file)
+subprocess.check_call(["git", "checkout", "repo"])
+file_path = "index.json"
+min_file_path = "index.min.json"
+with open(file_path, "r") as file:
+    data = json.load(file)
+    for object_json in data:
+        if "name" in object_json and tree.find(object_json['name']):
+            name_files.append(object_json['apk'])
+
+os.chdir('apk')
+print("count files " + str(len(name_files)))
+for file in name_files:
+    if os.path.exists(file):
+        print('ok ' + file)
+    else:
+        print("no " + file)
 for i in tree.all_str:
     print(i)
-
