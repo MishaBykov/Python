@@ -39,7 +39,8 @@ def main(git_tach_ext: str, install_tach_ext: str, dest_copy_apk: str):
         os.chdir('apk')
         data = json.load(file)
         for object_json in data:
-            if "name" in object_json and tree.find(object_json['name']):
+            if "name" in object_json and tree.find(object_json['name']) \
+                    and not tree.find(object_json['name'] + '  ' + object_json['version']):
                 if 'apk' in object_json and os.path.exists(object_json['apk']):
                     sh.move(object_json['apk'], dest_copy_apk)
                 else:
@@ -54,4 +55,4 @@ if __name__ == "__main__":
                         help="file with the names of installed extensions")
     args = parser.parse_args()
 
-    main(args.git_tach_ext, args.name_install_tach_ext, args.name_install_tach_ext)
+    main(args.git_tach_ext, args.name_install_tach_ext, args.dest_apk)
