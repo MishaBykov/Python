@@ -8,6 +8,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     renamer = Renamer(destination_path=args.path)
     for i in os.scandir(args.path):
+        i: os.DirEntry
         if i.is_dir():
             renamer.source_path = i.path
             for j in os.listdir(i.path):
