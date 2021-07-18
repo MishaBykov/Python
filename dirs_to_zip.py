@@ -7,17 +7,21 @@ import zipfile
 spaces = "    "
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='from dir dirs to zip')
-    parser.add_argument("source_path_dir", type=str, help="source path dir")
-    parser.add_argument("destination_path_dir", type=str, help="destination path dir")
+    parser.add_argument("source", type=str, help="source path dir")
+    parser.add_argument("destination", type=str, help="destination path dir")
     parser.add_argument("-m", "--move", action='store_true', help="delete source")
     args = parser.parse_args()
 
-    os.chdir(args.source_path_dir)
-    dirs = os.scandir()
+    if not os.path.exists(args.source):
+        print("source dir not exist")
+        exit()
+    os.chdir(args.source)
+    destination = args.destination
+    if not os.path.exists(destination):
+        print("create destination dir")
+        os.mkdir(destination)
 
-    destination = args.destination_path_dir
-
-    for d in dirs:
+    for d in os.scandir():
         d: os.DirEntry
         if d.is_dir():
             print(d.name)
@@ -27,6 +31,8 @@ if __name__ == '__main__':
                 # print(spaces + "exist destination")
                 continue
             temp_path_zip = os.path.join(destination, path_destination_zip + ".temp")
+            if os.path.exists(temp_path_zip):
+                os.remove(temp_path_zip)
             # print(spaces + "create zip")
             z = zipfile.ZipFile(temp_path_zip, 'w')  # Создание нового архива
             # print(spaces + "fill zip")
@@ -39,3 +45,4 @@ if __name__ == '__main__':
             os.rename(temp_path_zip, path_destination_zip)
             if args.move:
                 shutil.rmtree(d)
+    shutil.rmtree(args.source)
