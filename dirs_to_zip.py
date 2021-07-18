@@ -40,6 +40,6 @@ if __name__ == '__main__':
         if dir_entry.is_file():
             with zipfile.ZipFile(os.path.join(destination, "root.zip"), 'a') as zf:
                 zf.write(dir_entry.name)
-    if args.move and not os.listdir(source):
+    if args.move:
         os.chdir("..")
         shutil.rmtree(source)
