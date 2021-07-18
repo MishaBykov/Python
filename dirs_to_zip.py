@@ -12,37 +12,37 @@ if __name__ == '__main__':
     parser.add_argument("-m", "--move", action='store_true', help="delete source")
     args = parser.parse_args()
 
-    if not os.path.exists(args.source):
+    source = args.source
+    if not os.path.exists(source):
         print("source dir not exist")
         exit()
-    os.chdir(args.source)
     destination = args.destination
     if not os.path.exists(destination):
         print("create destination dir")
         os.mkdir(destination)
 
-    for d in os.scandir():
-        d: os.DirEntry
-        if d.is_dir():
-            print(d.name)
-            zip_name = d.name + '.zip'
-            path_destination_zip = os.path.join(destination, zip_name)
-            if os.path.exists(path_destination_zip):
-                # print(spaces + "exist destination")
-                continue
-            temp_path_zip = os.path.join(destination, path_destination_zip + ".temp")
-            if os.path.exists(temp_path_zip):
-                os.remove(temp_path_zip)
+    os.chdir(source)
+    for dir_entry in os.scandir():
+        dir_entry: os.DirEntry
+        if dir_entry.is_dir():
+            print(dir_entry.name)
+            path_destination_zip = os.path.join(destination, dir_entry.name + '.zip')
+            path_zip_temp = os.path.join(destination, path_destination_zip + ".temp")
             # print(spaces + "create zip")
-            z = zipfile.ZipFile(temp_path_zip, 'w')  # Создание нового архива
+            zf = zipfile.ZipFile(path_zip_temp, 'w')  # Создание нового архива
             # print(spaces + "fill zip")
-            for root, dirs, files in os.walk(d.path):  # Список всех файлов и папок в директории folder
+            for root, dirs, files in os.walk(dir_entry.path):  # Список всех файлов и папок в директории folder
                 for file in files:
-                    full_path = os.path.join(root, file)
-                    z.write(full_path)  # Создание относительных путей и запись файлов в архив
-            z.close()
+                    zf.write(os.path.join(root, file))  # Создание относительных путей и запись файлов в архив
+            zf.close()
             # print(spaces + "rename")
-            os.rename(temp_path_zip, path_destination_zip)
+            os.rename(path_zip_temp, path_destination_zip)
             if args.move:
-                shutil.rmtree(d)
-    shutil.rmtree(args.source)
+                shutil.rmtree(dir_entry)
+        if dir_entry.is_file():
+            with zipfile.ZipFile(os.path.join(destination, "root.zip"), 'a') as zf:
+                zf.write(dir_entry.name)
+                os.remove(dir_entry)
+    if args.move and not os.listdir(source):
+        os.chdir("..")
+        os.rmdir(source)
