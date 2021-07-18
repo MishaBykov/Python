@@ -37,12 +37,9 @@ if __name__ == '__main__':
             zf.close()
             # print(spaces + "rename")
             os.rename(path_zip_temp, path_destination_zip)
-            if args.move:
-                shutil.rmtree(dir_entry)
         if dir_entry.is_file():
             with zipfile.ZipFile(os.path.join(destination, "root.zip"), 'a') as zf:
                 zf.write(dir_entry.name)
-                os.remove(dir_entry)
     if args.move and not os.listdir(source):
         os.chdir("..")
-        os.rmdir(source)
+        shutil.rmtree(source)
