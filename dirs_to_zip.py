@@ -19,6 +19,7 @@ if __name__ == '__main__':
     destination = args.destination
     if not os.path.exists(destination):
         print("create destination dir")
+        destination = destination + ".temp"
         os.mkdir(destination)
 
     os.chdir(source)
@@ -40,6 +41,8 @@ if __name__ == '__main__':
         if dir_entry.is_file():
             with zipfile.ZipFile(os.path.join(destination, "root.zip"), 'a') as zf:
                 zf.write(dir_entry.name)
+    if args.destination != destination:
+        os.rename(destination, args.destination)
     if args.move:
         os.chdir("..")
         shutil.rmtree(source)
