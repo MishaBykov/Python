@@ -2,6 +2,7 @@ import argparse
 import os
 import shutil
 import zipfile
+import zlib
 
 # todo добавить логирование
 spaces = "    "
@@ -18,9 +19,8 @@ if __name__ == '__main__':
         exit()
     destination = args.destination
     if not os.path.exists(destination):
-        print("create destination dir")
         os.mkdir(destination)
-
+        print("create destination dir:\n" + destination)
     os.chdir(source)
     for dir_entry in os.scandir():
         dir_entry: os.DirEntry
@@ -28,12 +28,13 @@ if __name__ == '__main__':
             print(dir_entry.name)
             path_destination_zip = os.path.join(destination, dir_entry.name + '.zip')
             path_zip_temp = os.path.join(destination, path_destination_zip + ".temp")
-            # print(spaces + "create zip")
-            zf = zipfile.ZipFile(path_zip_temp, 'w')  # Создание нового архива
-            # print(spaces + "fill zip")
-            for root, dirs, files in os.walk(dir_entry.path):  # Список всех файлов и папок в директории folder
+            zip_exist = os.path.exists(path_destination_zip)
+            if os.path.exists(path_destination_zip):
+                continue
+            zf = zipfile.ZipFile(path_zip_temp, 'w')
+            for root, dirs, files in os.walk(dir_entry.path):
                 for file in files:
-                    zf.write(os.path.join(root, file))  # Создание относительных путей и запись файлов в архив
+                    zf.write(os.path.join(root, file))
             zf.close()
             # print(spaces + "rename")
             os.rename(path_zip_temp, path_destination_zip)
