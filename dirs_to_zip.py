@@ -36,7 +36,6 @@ if __name__ == '__main__':
                 for file in files:
                     zf.write(os.path.join(root, file))
             zf.close()
-            # print(spaces + "rename")
             os.rename(path_zip_temp, path_destination_zip)
         if dir_entry.is_file():
             with zipfile.ZipFile(os.path.join(destination, "root.zip"), 'a') as zf:
