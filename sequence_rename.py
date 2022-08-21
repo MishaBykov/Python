@@ -48,7 +48,7 @@ def dir_root_books(dir_path: str):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Name part replacement')
+    parser = argparse.ArgumentParser(description='management books')
     parser.add_argument("-drp", "--dit_root_path", type=str, help="input path")
     args = parser.parse_args()
 
