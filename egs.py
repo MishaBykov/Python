@@ -1,10 +1,11 @@
 import os
+import shutil as sh
 
-path = r"D:\FilesGames"
+path = r"F:\Games"
 find_dir = ".egstore"
 os.chdir(path)
 for i in os.scandir(path):
     i: os.DirEntry
     if i.is_dir() and os.path.exists(os.path.join(i.path, find_dir)):
-        os.rename(i.path, '_' + i.name)
+        sh.move(i.path, os.path.join(path, 'egs'))
 
