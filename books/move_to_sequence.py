@@ -41,8 +41,8 @@ def find_sequence(xml_file: str):
     return sequence.attrib if sequence is not None else None
 
 
-def books_move_sequence(books_dir_path: str):
-    for root, dirs, files in os.walk(books_dir_path):
+def books_move_sequence(source_path: str, target_path: str):
+    for root, dirs, files in os.walk(source_path):
         if len(files) == 0:
             continue
         for file in files:
@@ -67,9 +67,9 @@ def books_move_sequence(books_dir_path: str):
                     os.remove(os.path.join(root, file))
 
                 if sequence is None or 'name' not in sequence:
-                    sequence_path = os.path.join(books_dir_path, 'not sequence')
+                    sequence_path = os.path.join(target_path, 'not sequence')
                 else:
-                    sequence_path = os.path.join(books_dir_path, sequence['name'])
+                    sequence_path = os.path.join(target_path, sequence['name'])
 
                 if not os.path.exists(sequence_path):
                     os.mkdir(sequence_path)
@@ -114,7 +114,8 @@ def dir_root_books(dir_path: str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='management books')
-    parser.add_argument("-drp", "--dit_root_path", type=str, help="input path")
+    parser.add_argument("-sp", "--source_path", type=str, help="source path")
+    parser.add_argument("-tp", "--target_path", type=str, help="target path")
     args = parser.parse_args()
 
-    books_move_sequence(args.dit_root_path)
+    books_move_sequence(args.source_path, args.target_path)
