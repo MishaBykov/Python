@@ -18,7 +18,7 @@ def get_name_from_sequence(sequence: dict, ext: str) -> str | None:
     if 'number' in sequence:
         number = sequence['number']
     else:
-        name = ''
+        number = ''
     return name + ' ' + number + ext
 
 
