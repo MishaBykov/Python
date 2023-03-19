@@ -82,36 +82,6 @@ def books_move_sequence(source_path: str, target_path: str):
                 shutil.move(source_file, os.path.join(sequence_path, destination_name))
 
 
-def dir_root_books(dir_path: str):
-    entry: os.DirEntry
-    entries = list(os.scandir(dir_path))
-    sequence_files_fb2 = {}
-    for entry in entries:
-        if entry.is_dir():
-            dir_root_books(entry.path)
-        else:
-            ext = os.path.splitext(entry.name)[-1]
-            if ext == '.fb2':
-                sequence = find_sequence(entry.path)
-                if sequence is None:
-                    continue
-                if sequence["name"] in sequence_files_fb2:
-                    sequence_files_fb2[sequence["name"]].append((entry, sequence))
-                else:
-                    sequence_files_fb2[sequence["name"]] = [(entry, sequence)]
-
-    r = Renamer(dir_path)
-    for key in sequence_files_fb2:
-        for entry, sequence in sequence_files_fb2[key]:
-            number = (" " + sequence["number"]) if "number" in sequence else ""
-            r.rename(entry.name, sequence["name"] + number + ".fb2")
-    if len(sequence_files_fb2) == 1:
-        sequence_name = list(sequence_files_fb2.keys())[0]
-        if os.path.basename(dir_path) != sequence_name:
-            r = Renamer(os.path.dirname(dir_path))
-            r.rename(os.path.basename(dir_path), sequence_name)
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='management books')
     parser.add_argument("-sp", "--source_path", type=str, help="source path")
