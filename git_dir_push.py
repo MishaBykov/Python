@@ -22,3 +22,24 @@ if __name__ == '__main__':
         for program in programs:
             program.wait()
             print(program.communicate())
+
+# set log_file="%~dp0"dirs_git_push_log.txt
+# set error_file="%~dp0"dirs_git_push_error.txt
+# echo > %log_file%
+# echo > %error_file%
+# for /f "usebackq tokens=*" %%a in ("%~dp0path_git.txt") do (
+# IF EXIST "%%a" (
+# echo "%%a" >> %log_file%
+# echo "%%a" >> %error_file%
+# cd /d "%%a"
+# call :f
+# ) else (
+# echo not found "%%a" 2>> %error_file%
+# )
+# )
+# exit
+# :f
+# git add --all . >> %log_file% 2>> %error_file%
+# git commit -a -m '+'  >> %log_file% 2>> %error_file%
+# git push >> %log_file% 2>> %error_file%
+
