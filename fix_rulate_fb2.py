@@ -40,5 +40,4 @@ if __name__ == '__main__':
     element_tree = ET.fromstring(fixed_xml.encode(encoding='utf-8'))
 
     with open(path_result, "wb") as file:
-        file.write(ET.tostring(element_tree, encoding="utf-8"))
-        # element_tree.write(file, xml_declaration=True, encoding="utf-8")
+        file.write(ET.tostring(element_tree, encoding="utf-8", xml_declaration=True))
