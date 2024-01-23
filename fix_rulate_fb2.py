@@ -14,6 +14,8 @@ LAST_NAME = getattr(EMFictionBook, 'last-name')
 ANNOTATION = EMFictionBook.annotation
 P = EMFictionBook.p
 SECTION = EMFictionBook.section
+TRANSLATOR = EMFictionBook.translator
+NICKNAME = EMFictionBook.nickname
 SEQUENCE = EMFictionBook.sequence
 
 
@@ -30,6 +32,7 @@ new_author = {
     'first-name': 'Nam',
     'last-name': 'Heesung'
 }
+translator_nickname = 'Captain'
 new_annotation = 'Книга о виртуальной реальности. Главный герой Хэн стремится всеми силами выплыть из бедности ' \
                  'благодаря компьютерной игре. Бестселлер. '
 sequence_name = 'Легендарный Лунный Скульптор'
@@ -98,6 +101,11 @@ def fix_title_info(title_info: etree.ElementBase):
     else:
         book_title.addnext(create_element_annotation())
 
+    title_info.append(
+        TRANSLATOR(
+            NICKNAME(translator_nickname)
+        )
+    )
     title_info.append(
         SEQUENCE(name=sequence_name, number=str(extract_sequence_value(title_info)))
     )
