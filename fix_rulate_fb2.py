@@ -111,8 +111,10 @@ def fix_title_info(title_info: etree.ElementBase):
     )
 
 
-def fix_document_info():
-    pass
+def fix_document_info(document_info: etree.ElementBase):
+    author_tag: etree.ElementBase = document_info.find('./{*}author')
+    author_tag.insert(0, LAST_NAME())
+    author_tag.insert(0, FIRST_NAME())
 
 
 def fix_coverpage(root_element: etree.ElementBase):
@@ -151,6 +153,13 @@ def fix_xml(xml: str) -> bytes:
         fix_title_info(title_info)
 
     fix_coverpage(root_tree)
+
+    document_info_path = './{*}description/{*}document-info'
+    document_info: etree.ElementBase = root_tree.find(document_info_path)
+    if document_info is None:
+        print(tag_not_found_message.format(document_info_path))
+    else:
+        fix_document_info(document_info)
 
     return etree.tostring(root_tree, encoding="utf-8", xml_declaration=True)
 
