@@ -53,7 +53,7 @@ def fix_genre(title_info: etree.ElementBase):
     genres = title_info.findall('{*}genre')
 
     for genre in genres:
-        print(genre.tag + " -> remove")
+        print("remove: " + genre.tag)
         genre.getparent().remove(genre)
 
     for new_genre in reversed(new_genres):
