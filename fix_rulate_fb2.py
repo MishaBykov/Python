@@ -1,10 +1,30 @@
-import lxml.etree as ET
+from lxml.builder import ElementMaker
+from lxml import etree
 
-ET.register_namespace = {"http://www.w3.org/1999/xlink": "",
-                         "http://www.gribuser.ru/xml/fictionbook/2.0": ""}
+tag_not_found_message = "tag with path ({}) not found"
+
+EMFictionBook = ElementMaker(namespace="http://www.gribuser.ru/xml/fictionbook/2.0",
+                             nsmap={'l': "http://www.w3.org/1999/xlink"})
+GENRE = EMFictionBook.genre
+AUTHOR = EMFictionBook.author
+FIRST_NAME = getattr(EMFictionBook, 'first-name')
+LAST_NAME = getattr(EMFictionBook, 'last-name')
+ANNOTATION = EMFictionBook.annotation
+P = EMFictionBook.p
+SECTION = EMFictionBook.section
+
+fictionbook_ns = "http://www.gribuser.ru/xml/fictionbook/2.0"
 
 path_book = r'D:\repos\lms\Легендарный_Лунный_Скульптор_Том_01.fb2'
 path_result = r"D:\repos\lms\output.fb2"
+new_genres = ['network_literature', 'sf_action', 'sf_heroic']
+new_author = {
+    'first-name': 'Nam',
+    'last-name': 'Heesung'
+}
+new_annotation = 'Книга о виртуальной реальности. Главный герой Хэн стремится всеми силами выплыть из бедности ' \
+                 'благодаря компьютерной игре. Бестселлер. '
+new_sequence_name = 'Легендарный Лунный Скульптор'
 
 
 def fix_syntax_xml_table(xml: str) -> str:
@@ -22,12 +42,79 @@ def fix_syntax_xml_table(xml: str) -> str:
     return result
 
 
-def fix_xml(xml: str) -> str:
-    result = xml.replace('﻿', '')
-    result = result.replace('  ', '')
-    result = fix_syntax_xml_table(result)
+def fix_genre(title_info: etree.ElementBase):
+    genres = title_info.findall('{*}genre')
 
-    return result
+    for genre in genres:
+        print(genre.tag + " -> remove")
+        genre.getparent().remove(genre)
+
+    for new_genre in reversed(new_genres):
+        title_info.insert(0, GENRE(new_genre))
+
+
+def create_element_author() -> etree.ElementBase:
+    return AUTHOR(
+        FIRST_NAME(new_author['first-name']),
+        LAST_NAME(new_author['last-name'])
+    )
+
+
+def create_element_annotation() -> etree.ElementBase:
+    return ANNOTATION(
+        P(
+            new_annotation
+        )
+    )
+
+
+def extract_sequence_value():
+    pass
+
+
+def fix_title_info(title_info: etree.ElementBase):
+    fix_genre(title_info)
+
+    author_tag = title_info.find('{*}author')
+    title_info.replace(author_tag, create_element_author())
+
+    book_title_path = '{*}book-title'
+    book_title: etree.ElementBase = title_info.find(book_title_path)
+    if book_title is None:
+        print(tag_not_found_message.format(book_title_path))
+    else:
+        book_title.addnext(create_element_annotation())
+
+
+
+
+
+def fix_document_info():
+    pass
+
+
+def fix_xml(xml: str) -> bytes:
+    result = xml.replace('﻿', '').replace('  ', '')
+    result = fix_syntax_xml_table(result)
+    root_tree: etree.ElementBase = etree.fromstring(result.encode(encoding='utf-8'))
+
+    print("root tag = " + root_tree.tag)
+
+    stylesheet: etree.ElementBase = root_tree.find("{*}stylesheet")
+    if stylesheet is not None:
+        print('remove: ' + stylesheet.tag)
+        stylesheet.getparent().remove(stylesheet)
+
+    title_info_path = './{*}description/{*}title-info'
+    title_info: etree.ElementBase = root_tree.find(title_info_path)
+    if title_info is None:
+        print(tag_not_found_message.format(title_info_path))
+    else:
+        fix_title_info(title_info)
+
+    # fix_coverpage(root_tree)
+
+    return etree.tostring(root_tree, encoding="utf-8", xml_declaration=True)
 
 
 if __name__ == '__main__':
@@ -37,7 +124,5 @@ if __name__ == '__main__':
 
     fixed_xml = fix_xml(text_file)
 
-    element_tree = ET.fromstring(fixed_xml.encode(encoding='utf-8'))
-
     with open(path_result, "wb") as file:
-        file.write(ET.tostring(element_tree, encoding="utf-8", xml_declaration=True))
+        file.write(fixed_xml)
