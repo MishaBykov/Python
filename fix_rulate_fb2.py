@@ -93,11 +93,24 @@ def fix_title_info(title_info: etree.ElementBase):
         book_title.addnext(create_element_annotation())
 
 
-
-
-
 def fix_document_info():
     pass
+
+
+def fix_coverpage(root_element: etree.ElementBase):
+    coverpage_image_abs_path = '/{*}description/{*}title-info/{*}coverpage/{*}image'
+    image_tag: etree.ElementBase = root_element.getroottree().find(coverpage_image_abs_path)
+    if image_tag is None:
+        print(tag_not_found_message.format(coverpage_image_abs_path))
+        return
+    attrib_name = etree.QName(Namespaces.xlink, 'href')
+    image_name = image_tag.attrib[attrib_name.text].lstrip('#')
+
+    binary_tag: etree.ElementBase = root_element.getroottree().find('/{*}binary/[@id="' + image_name + '"]')
+
+    new_id = 'cover'
+    binary_tag.attrib['id'] = new_id
+    image_tag.attrib[attrib_name.text] = '#' + new_id
 
 
 def fix_xml(xml: str) -> bytes:
@@ -119,7 +132,7 @@ def fix_xml(xml: str) -> bytes:
     else:
         fix_title_info(title_info)
 
-    # fix_coverpage(root_tree)
+    fix_coverpage(root_tree)
 
     return etree.tostring(root_tree, encoding="utf-8", xml_declaration=True)
 
