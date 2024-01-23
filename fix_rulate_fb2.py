@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from lxml.builder import ElementMaker
 from lxml import etree
 
@@ -13,7 +15,12 @@ ANNOTATION = EMFictionBook.annotation
 P = EMFictionBook.p
 SECTION = EMFictionBook.section
 
-fictionbook_ns = "http://www.gribuser.ru/xml/fictionbook/2.0"
+
+@dataclass(frozen=True)
+class Namespaces:
+    fictionBook: str = "http://www.gribuser.ru/xml/fictionbook/2.0"
+    xlink: str = "http://www.w3.org/1999/xlink"
+
 
 path_book = r'D:\repos\lms\Легендарный_Лунный_Скульптор_Том_01.fb2'
 path_result = r"D:\repos\lms\output.fb2"
