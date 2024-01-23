@@ -14,6 +14,7 @@ LAST_NAME = getattr(EMFictionBook, 'last-name')
 ANNOTATION = EMFictionBook.annotation
 P = EMFictionBook.p
 SECTION = EMFictionBook.section
+SEQUENCE = EMFictionBook.sequence
 
 
 @dataclass(frozen=True)
@@ -31,7 +32,7 @@ new_author = {
 }
 new_annotation = 'Книга о виртуальной реальности. Главный герой Хэн стремится всеми силами выплыть из бедности ' \
                  'благодаря компьютерной игре. Бестселлер. '
-new_sequence_name = 'Легендарный Лунный Скульптор'
+sequence_name = 'Легендарный Лунный Скульптор'
 
 
 def fix_syntax_xml_table(xml: str) -> str:
@@ -75,8 +76,13 @@ def create_element_annotation() -> etree.ElementBase:
     )
 
 
-def extract_sequence_value():
-    pass
+def extract_sequence_value(title_info: etree.ElementBase) -> int | None:
+    book_title_path = './{*}book-title'
+    book_title: etree.ElementBase = title_info.find(book_title_path)
+    if book_title is None:
+        print(tag_not_found_message.format(book_title_path))
+        return None
+    return int(book_title.text.split()[-1])
 
 
 def fix_title_info(title_info: etree.ElementBase):
@@ -91,6 +97,10 @@ def fix_title_info(title_info: etree.ElementBase):
         print(tag_not_found_message.format(book_title_path))
     else:
         book_title.addnext(create_element_annotation())
+
+    title_info.append(
+        SEQUENCE(name=sequence_name, number=str(extract_sequence_value(title_info)))
+    )
 
 
 def fix_document_info():
