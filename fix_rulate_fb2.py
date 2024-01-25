@@ -134,6 +134,15 @@ def fix_coverpage(root_element: etree.ElementBase):
     image_tag.attrib[attrib_name.text] = '#' + new_id
 
 
+def fix_body(body_tag: etree.ElementBase):
+    for p in body_tag.iter("{*}p"):
+        p: etree.ElementBase
+        if p.text.isspace():
+            p.getparent().remove(p)
+
+        pass
+
+
 def fix_tag(parent_element: etree.ElementBase, find_path: str, fix_method: Callable[[etree.ElementBase], None]):
     title_info: etree.ElementBase = parent_element.find(find_path)
     if title_info is None:
