@@ -1,5 +1,4 @@
 from collections.abc import Callable
-from dataclasses import dataclass
 
 from lxml.builder import ElementMaker
 from lxml import etree
@@ -19,12 +18,7 @@ TRANSLATOR = EMFictionBook.translator
 NICKNAME = EMFictionBook.nickname
 SEQUENCE = EMFictionBook.sequence
 
-
-@dataclass(frozen=True)
-class Namespaces:
-    fictionBook: str = "http://www.gribuser.ru/xml/fictionbook/2.0"
-    xlink: str = "http://www.w3.org/1999/xlink"
-
+namespace_xlink: str = "http://www.w3.org/1999/xlink"
 
 path_book = r'D:\repos\lms\Легендарный_Лунный_Скульптор_Том_01.fb2'
 path_result = r"D:\repos\lms\output.fb2"
@@ -124,7 +118,7 @@ def fix_coverpage(root_element: etree.ElementBase):
     if image_tag is None:
         print(tag_not_found_message.format(coverpage_image_abs_path))
         return
-    attrib_name = etree.QName(Namespaces.xlink, 'href')
+    attrib_name = etree.QName(namespace_xlink, 'href')
     image_name = image_tag.attrib[attrib_name.text].lstrip('#')
 
     binary_tag: etree.ElementBase = root_element.getroottree().find('/{*}binary/[@id="' + image_name + '"]')
