@@ -137,9 +137,10 @@ def fix_coverpage(root_element: etree.ElementBase):
 def fix_body(body_tag: etree.ElementBase):
     for p in body_tag.iter("{*}p"):
         p: etree.ElementBase
-        if p.text.isspace():
+        if p.text.isspace() and len(p) == 0:
             p.getparent().remove(p)
 
+        # Глава[0 - 9]([0 - 9] |)\.
         pass
 
 
