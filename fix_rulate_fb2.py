@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from lxml.builder import ElementMaker
@@ -133,6 +134,14 @@ def fix_coverpage(root_element: etree.ElementBase):
     image_tag.attrib[attrib_name.text] = '#' + new_id
 
 
+def fix_tag(parent_element: etree.ElementBase, find_path: str, fix_method: Callable[[etree.ElementBase], None]):
+    title_info: etree.ElementBase = parent_element.find(find_path)
+    if title_info is None:
+        print(tag_not_found_message.format(find_path))
+    else:
+        fix_method(title_info)
+
+
 def fix_xml(xml: str) -> bytes:
     result = xml.replace('﻿', '').replace('  ', '')
     result = fix_syntax_xml_table(result)
@@ -145,21 +154,13 @@ def fix_xml(xml: str) -> bytes:
         print('remove: ' + stylesheet.tag)
         stylesheet.getparent().remove(stylesheet)
 
-    title_info_path = './{*}description/{*}title-info'
-    title_info: etree.ElementBase = root_tree.find(title_info_path)
-    if title_info is None:
-        print(tag_not_found_message.format(title_info_path))
-    else:
-        fix_title_info(title_info)
+    fix_tag(root_tree, './{*}description/{*}title-info', fix_title_info)
 
     fix_coverpage(root_tree)
 
-    document_info_path = './{*}description/{*}document-info'
-    document_info: etree.ElementBase = root_tree.find(document_info_path)
-    if document_info is None:
-        print(tag_not_found_message.format(document_info_path))
-    else:
-        fix_document_info(document_info)
+    fix_tag(root_tree, './{*}description/{*}document-info', fix_document_info)
+
+    fix_tag(root_tree, './{*}body', fix_body)
 
     return etree.tostring(root_tree, encoding="utf-8", xml_declaration=True)
 
