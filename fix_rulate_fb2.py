@@ -1,3 +1,5 @@
+import re
+
 from collections.abc import Callable
 
 from lxml.builder import ElementMaker
@@ -20,8 +22,10 @@ SEQUENCE = EMFictionBook.sequence
 
 namespace_xlink: str = "http://www.w3.org/1999/xlink"
 
-path_book = r'D:\repos\lms\Легендарный_Лунный_Скульптор_Том_01.fb2'
-path_result = r"D:\repos\lms\output.fb2"
+# path_book = r'D:\repos\lms\Легендарный_Лунный_Скульптор_Том_01.fb2'
+path_book = r'/home/misha/repos/lms/Легендарный_Лунный_Скульптор_Том_01.fb2'
+# path_result = r"D:\repos\lms\output.fb2"
+path_result = r"/home/misha/repos/lms/output.fb2"
 new_genres = ['network_literature', 'sf_action', 'sf_heroic']
 new_author = {
     'first-name': 'Nam',
@@ -134,9 +138,6 @@ def fix_body(body_tag: etree.ElementBase):
         if p.text.isspace() and len(p) == 0:
             p.getparent().remove(p)
 
-        # Глава[0 - 9]([0 - 9] |)\.
-        pass
-
 
 def fix_tag(parent_element: etree.ElementBase, find_path: str, fix_method: Callable[[etree.ElementBase], None]):
     title_info: etree.ElementBase = parent_element.find(find_path)
@@ -146,9 +147,21 @@ def fix_tag(parent_element: etree.ElementBase, find_path: str, fix_method: Calla
         fix_method(title_info)
 
 
+def add_section(xml: str) -> str:
+    result = xml
+    titles = re.findall('(Глава [0-9][0-9]?\\..*?)<', xml)
+    for i in range(1, len(titles)):
+        ind_title = result.find(titles[i])
+        ind_p_before = result.rfind('<p>', 0, ind_title)
+        result = result[:ind_p_before] + '</section><section>' + result[ind_p_before:]
+    return result
+
+
 def fix_xml(xml: str) -> bytes:
-    result = xml.replace('﻿', '').replace('  ', '')
+    result = xml.replace('﻿', '').replace(' ', '')
     result = fix_syntax_xml_table(result)
+    result = add_section(result)
+
     root_tree: etree.ElementBase = etree.fromstring(result.encode(encoding='utf-8'))
 
     print("root tag = " + root_tree.tag)
