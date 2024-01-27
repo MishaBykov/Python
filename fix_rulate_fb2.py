@@ -153,7 +153,7 @@ def add_section(xml: str) -> str:
     for i in range(1, len(titles)):
         ind_title = result.find(titles[i])
         ind_p_before = result.rfind('<p>', 0, ind_title)
-        result = result[:ind_p_before] + '</section><section>' + result[ind_p_before:]
+        result = ''.join([result[:ind_p_before], '</section><section>', result[ind_p_before:]])
     return result
 
 
