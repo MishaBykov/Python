@@ -16,11 +16,13 @@ LAST_NAME = getattr(EMFictionBook, 'last-name')
 ANNOTATION = EMFictionBook.annotation
 P = EMFictionBook.p
 SECTION = EMFictionBook.section
+TITLE = EMFictionBook.title
 TRANSLATOR = EMFictionBook.translator
 NICKNAME = EMFictionBook.nickname
 SEQUENCE = EMFictionBook.sequence
 
 namespace_xlink: str = "http://www.w3.org/1999/xlink"
+namespace_fiction_book: str = "http://www.gribuser.ru/xml/fictionbook/2.0"
 
 # path_book = r'D:\repos\lms\Легендарный_Лунный_Скульптор_Том_01.fb2'
 path_book = r'/home/misha/repos/lms/Легендарный_Лунный_Скульптор_Том_01.fb2'
@@ -137,6 +139,22 @@ def fix_body(body_tag: etree.ElementBase):
         p: etree.ElementBase
         if p.text.isspace() and len(p) == 0:
             p.getparent().remove(p)
+
+    titles = body_tag.xpath("//*[re:match(text(), 'Глава [0-9][0-9]?\\..*')]",
+                            namespaces={"re": "http://exslt.org/regular-expressions"})
+
+    print(titles)
+    print(len(titles))
+
+    for element in titles:
+        title_text = element.text
+        find_tag = ''.join(['{', namespace_fiction_book, '}', 'section'])
+        while element.getparent().tag != find_tag:
+            element = element.getparent()
+
+        section: etree.ElementBase = element.getparent()
+        section.remove(element)
+        section.insert(0, TITLE(P(title_text)))
 
 
 def fix_tag(parent_element: etree.ElementBase, find_path: str, fix_method: Callable[[etree.ElementBase], None]):
