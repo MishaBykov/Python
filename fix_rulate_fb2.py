@@ -134,12 +134,7 @@ def fix_coverpage(root_element: etree.ElementBase):
     image_tag.attrib[attrib_name.text] = '#' + new_id
 
 
-def fix_body(body_tag: etree.ElementBase):
-    for p in body_tag.iter("{*}p"):
-        p: etree.ElementBase
-        if p.text.isspace() and len(p) == 0:
-            p.getparent().remove(p)
-
+def fix_section_title(body_tag: etree.ElementBase):
     titles = body_tag.xpath("//*[re:match(text(), 'Глава [0-9][0-9]?\\..*')]",
                             namespaces={"re": "http://exslt.org/regular-expressions"})
 
@@ -152,6 +147,15 @@ def fix_body(body_tag: etree.ElementBase):
         section: etree.ElementBase = element.getparent()
         section.remove(element)
         section.insert(0, TITLE(P(title_text)))
+
+
+def fix_body(body_tag: etree.ElementBase):
+    for p in body_tag.iter("{*}p"):
+        p: etree.ElementBase
+        if p.text.isspace() and len(p) == 0:
+            p.getparent().remove(p)
+
+    fix_section_title(body_tag)
 
 
 def fix_tag(parent_element: etree.ElementBase, find_path: str, fix_method: Callable[[etree.ElementBase], None]):
