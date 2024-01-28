@@ -143,9 +143,6 @@ def fix_body(body_tag: etree.ElementBase):
     titles = body_tag.xpath("//*[re:match(text(), 'Глава [0-9][0-9]?\\..*')]",
                             namespaces={"re": "http://exslt.org/regular-expressions"})
 
-    print(titles)
-    print(len(titles))
-
     for element in titles:
         title_text = element.text
         find_tag = ''.join(['{', namespace_fiction_book, '}', 'section'])
