@@ -20,6 +20,8 @@ TITLE = EMFictionBook.title
 TRANSLATOR = EMFictionBook.translator
 NICKNAME = EMFictionBook.nickname
 SEQUENCE = EMFictionBook.sequence
+TR = EMFictionBook.tr
+TD = EMFictionBook.td
 
 namespace_xlink: str = "http://www.w3.org/1999/xlink"
 namespace_fiction_book: str = "http://www.gribuser.ru/xml/fictionbook/2.0"
@@ -156,6 +158,25 @@ def fix_body(body_tag: etree.ElementBase):
             p.getparent().remove(p)
 
     fix_section_title(body_tag)
+
+    tables = body_tag.findall('./{*}section/{*}table')
+
+    for table in tables:
+        table: etree.ElementBase
+        if len(table) != 1:
+            print("skip table: " + table.tag)
+            continue
+        tr = table.getchildren()[0]
+        if len(tr) != 1:
+            print("skip table: " + table.tag)
+            continue
+        td: etree.ElementBase = tr.getchildren()[0]
+        td_text = td.text
+        table.clear()
+        for line in td_text.split('\n'):
+            if line.isspace():
+                continue
+            table.append(TR(TD(line)))
 
 
 def fix_tag(parent_element: etree.ElementBase, find_path: str, fix_method: Callable[[etree.ElementBase], None]):
