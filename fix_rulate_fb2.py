@@ -1,3 +1,4 @@
+import argparse
 import re
 
 from collections.abc import Callable
@@ -26,10 +27,6 @@ TD = EMFictionBook.td
 namespace_xlink: str = "http://www.w3.org/1999/xlink"
 namespace_fiction_book: str = "http://www.gribuser.ru/xml/fictionbook/2.0"
 
-# path_book = r'D:\repos\lms\Легендарный_Лунный_Скульптор_Том_01.fb2'
-path_book = r'/home/misha/repos/lms/Легендарный_Лунный_Скульптор_Том_01.fb2'
-# path_result = r"D:\repos\lms\output.fb2"
-path_result = r"/home/misha/repos/lms/output.fb2"
 new_genres = ['network_literature', 'sf_action', 'sf_heroic']
 new_author = {
     'first-name': 'Nam',
@@ -223,6 +220,14 @@ def fix_xml(xml: str) -> bytes:
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('path_book', type=str)
+    parser.add_argument('path_result', type=str)
+    args = parser.parse_args()
+
+    path_book = args.path_book
+    path_result = args.path_result
+
     text_file: str
     with open(path_book, "r", encoding="utf-8") as file:
         text_file = file.read()
