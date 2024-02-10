@@ -1,6 +1,6 @@
 import argparse
 import re
-
+import os
 from collections.abc import Callable
 
 from lxml.builder import ElementMaker
@@ -219,14 +219,8 @@ def fix_xml(xml: str) -> bytes:
     return etree.tostring(root_tree, encoding="utf-8", xml_declaration=True)
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('path_book', type=str)
-    parser.add_argument('path_result', type=str)
-    args = parser.parse_args()
-
-    path_book = args.path_book
-    path_result = args.path_result
+def fix_fb2(path_book: str, path_result: str):
+    print('path_book: ' + path_book)
 
     text_file: str
     with open(path_book, "r", encoding="utf-8") as file:
@@ -236,3 +230,21 @@ if __name__ == '__main__':
 
     with open(path_result, "wb") as file:
         file.write(fixed_xml)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('path_books', type=str)
+    args = parser.parse_args()
+
+    path_books = args.path_books
+
+    files = os.listdir(path_books)
+
+    for file_name in files:
+        full_path = os.path.join(path_books, file_name)
+        if os.path.isdir(full_path):
+            continue
+        if os.path.splitext(file_name)[1] != ".fb2":
+            continue
+        fix_fb2(full_path, full_path)
