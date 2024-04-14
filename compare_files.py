@@ -22,4 +22,5 @@ if __name__ == '__main__':
         cmp_result = filecmp.cmp(os.path.join(dir1, file_name), os.path.join(dir2, file_name))
         if not cmp_result:
             print(file_name + ':', cmp_result)
-        print('files left:', --count_files)
+        count_files -= 1
+        print('files left:', count_files)
