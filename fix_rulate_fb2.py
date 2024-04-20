@@ -79,13 +79,17 @@ def create_element_annotation() -> etree.ElementBase:
     )
 
 
-def extract_sequence_value(title_info: etree.ElementBase) -> int | None:
+def extract_sequence_number(title_info: etree.ElementBase) -> int | None:
     book_title_path = './{*}book-title'
     book_title: etree.ElementBase = title_info.find(book_title_path)
     if book_title is None:
         print(tag_not_found_message.format(book_title_path))
         return None
-    return int(book_title.text.split()[-1])
+    sequence_number = book_title.text.split()[-1]
+    if not sequence_number.isdigit():
+        print("sequence value is not number: " + sequence_number)
+        return None
+    return int(sequence_number)
 
 
 def fix_title_info(title_info: etree.ElementBase):
@@ -106,9 +110,11 @@ def fix_title_info(title_info: etree.ElementBase):
             NICKNAME(translator_nickname)
         )
     )
-    title_info.append(
-        SEQUENCE(name=sequence_name, number=str(extract_sequence_value(title_info)))
-    )
+    if extract_sequence_number(title_info) is None:
+        sequence = SEQUENCE(name=sequence_name)
+    else:
+        sequence = SEQUENCE(name=sequence_name, number=str(extract_sequence_number(title_info)))
+    title_info.append(sequence)
 
 
 def fix_document_info(document_info: etree.ElementBase):
