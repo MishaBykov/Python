@@ -42,13 +42,14 @@ def fix_syntax_xml_table(xml: str) -> str:
     result = xml
     begin_i = 0
     while True:
-        tag_open_table_i = result.find("<table>", begin_i)
-        tag_close_table_i = result.find("</table>", tag_open_table_i)
-        if tag_open_table_i == -1 or tag_close_table_i == -1:
+        tag_first_table_i = result.find("table>", begin_i)
+        tag_second_table_i = result.find("table>", tag_first_table_i + 1)
+        print(result[tag_first_table_i: tag_second_table_i])
+        if tag_first_table_i == -1 or tag_second_table_i == -1:
             break
-        table = result[tag_open_table_i: tag_close_table_i].replace("<p>", "").replace("</p>", "")
-        result = result[:tag_open_table_i] + table + result[tag_close_table_i:]
-        begin_i = tag_open_table_i + len(table)
+        table = result[tag_first_table_i: tag_second_table_i].replace("<p>", "").replace("</p>", "")
+        result = result[:tag_first_table_i] + table + result[tag_second_table_i:]
+        begin_i = tag_first_table_i + len(table)
 
     return result
 
@@ -204,9 +205,15 @@ def fix_xml(xml: str) -> bytes:
     result = xml.replace('﻿', '').replace(' ', '')
     result = fix_syntax_xml_table(result)
     result = add_section(result)
-
-    root_tree: etree.ElementBase = etree.fromstring(result.encode(encoding='utf-8'))
-
+    root_tree: etree.ElementBase
+    try:
+        root_tree = etree.fromstring(result.encode(encoding='utf-8'))
+    except etree.XMLSyntaxError as e:
+        lines = result.split('\n')
+        count_print_lines = 10
+        for i in range(e.position[0] - count_print_lines, e.position[0] + count_print_lines):
+            print(lines[i])
+        raise e
     print("root tag = " + root_tree.tag)
 
     stylesheet: etree.ElementBase = root_tree.find("{*}stylesheet")
